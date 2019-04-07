@@ -1,7 +1,12 @@
+#install.packages(c("dplyr", "gutenbergr"))
 library(gutenbergr)
 library(dplyr)
 
+<<<<<<< HEAD
 
+=======
+#Italian Books
+>>>>>>> a0b7c68a503fddb4edbda77cb8399efc65f1f068
 Italian_1200_id = c(1012, 997, 1009, 999, 1011, 1010, 998, 1000, 29977, 26961)
 Italian_1400_id = c(57780, 3747, 50306, 57787, 46599, 56498, 45126)
 Italian_1550_id = c(19688, 48530, 17440, 54167, 30839, 28372, 28368, 34639, 22502, 47051)
@@ -16,6 +21,40 @@ Italian_1700 <- gutenberg_download(Italian_1700_id, meta_fields = "title")
 Italian_1815 <- gutenberg_download(Italian_1815_id, meta_fields = "title")
 Italian_1915 <- gutenberg_download(Italian_1915_id, meta_fields = "title")
 
+#Spanish Books
+Es_1400_id = c(57505, 50430, 25705, 46201, 51465, 50526, 12457, 49914, 56454, 53207)
+Es_1600_id = c(2000, 15115, 32315, 18580, 28408, 12457, 16110, 57035, 15027)
+Es_1700_id = c(50027, 52682, 50492, 55796, 12840, 5985, 7109, 29497)
+Es_1800_id = c(29105, 26284, 52262, 55215, 36990)
+Es_1850_id = c(37590, 14765, 15066, 27214, 10909, 25671, 54228)
+Es_1900_id = c(16109,29799, 43861, 28592, 39947, 55038, 58484, 28002, 43400, 30275)
+
+Es_1400 = gutenberg_download(Es_1400_id, meta_fields = "title")
+Es_1600 = gutenberg_download(Es_1600_id, meta_fields = "title")
+Es_1700 = gutenberg_download(Es_1700_id, meta_fields = "title")
+Es_1800 = gutenberg_download(Es_1800_id, meta_fields = "title")
+Es_1850 = gutenberg_download(Es_1850, meta_fields = "title")
+Es_1900 = gutenberg_download(Es_1900_id, meta_fields = "title")
+
+#English Books
+English_Old_id=gutenberg_download((9700))
+English_1066_id=gutenberg_download(c(14305,17400,22120,16845,17179,14568))
+English_1500_id=gutenberg_download(c(55765,44083,14496,6953,1112,2264,2265,23042,38549,22421))
+English_1660_id=gutenberg_download(c(17221,131,829,4085,2160,521,1292,6130,2667,1079,370))
+English_1785=gutenberg_download(c(9622,10219,16357,2323,10851,34470,158,42671,21839,8448))
+English_1832_id=gutenberg_download(c(16950,19188,4212,44919,5159,766,786,730,19337,1400))
+English_1901_id=gutenberg_download(c(974,2021,1142,6424,524,4264,177,432,32772,35555))
+English_1914_id=gutenberg_download(c(5670,144,42589,49204))
+
+English_Old <- gutenberg_download(English_Old_id, meta_fields = "title")
+English_1066 <- gutenberg_download(English_1066_id, meta_fields = "title")
+English_1500 <- gutenberg_download(English_1500_id, meta_fields = "title")
+English_1660 <- gutenberg_download(English_1660_id, meta_fields = "title")
+English_1785 <- gutenberg_download(English_1785_id, meta_fields = "title")
+English_1832 <- gutenberg_download(English_1832_id, meta_fields = "title")
+English_1901 <- gutenberg_download(English_1901_id, meta_fields = "title")
+English_1914 <- gutenberg_download(English_1914_id, meta_fields = "title")
+
 # checking
 Italian_1200 %>% count(title)
 Italian_1400 %>% count(title)
@@ -23,3 +62,12 @@ Italian_1550 %>% count(title)
 Italian_1700 %>% count(title)
 Italian_1815 %>% count(title)
 Italian_1915 %>% count(title)
+
+English_Old %>% count(title)
+English_1066 %>% count(title)
+English_1500 %>% count(title)
+English_1660 %>% count(title)
+English_1785 %>% count(title)
+English_1832 %>% count(title)
+English_1901 %>% count(title)
+English_1914 %>% count(title)
