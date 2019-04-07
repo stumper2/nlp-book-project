@@ -29,7 +29,7 @@ Spanish_1400 = gutenberg_download(Spanish_1400_id, meta_fields = "title")
 Spanish_1600 = gutenberg_download(Spanish_1600_id, meta_fields = "title")
 Spanish_1700 = gutenberg_download(Spanish_1700_id, meta_fields = "title")
 Spanish_1800 = gutenberg_download(Spanish_1800_id, meta_fields = "title")
-Spanish_1850 = gutenberg_download(Spanish_1850, meta_fields = "title")
+Spanish_1850 = gutenberg_download(Spanish_1850_id, meta_fields = "title")
 Spanish_1900 = gutenberg_download(Spanish_1900_id, meta_fields = "title")
 
 
