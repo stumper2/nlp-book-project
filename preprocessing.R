@@ -2,16 +2,11 @@
 library(gutenbergr)
 library(dplyr)
 
-<<<<<<< HEAD
 
-=======
 #Italian Books
-<<<<<<< HEAD
->>>>>>> a0b7c68a503fddb4edbda77cb8399efc65f1f068
+
 Italian_1200_id = c(1012, 997, 1009, 999, 1011, 1010, 998, 1000, 29977, 26961)
-=======
 Italian_1200_id = c(1000, 29977, 26961)
->>>>>>> 8d697da0c14b261f3ff26935bdee42f900291793
 Italian_1400_id = c(57780, 3747, 50306, 57787, 46599, 56498, 45126)
 Italian_1550_id = c(19688, 48530, 17440, 54167, 30839, 28372, 28368, 34639, 22502, 47051)
 Italian_1700_id = c(31079, 38012, 31080, 47664, 21425, 19808, 20094, 33782,42881, 43575, 56482)
@@ -85,3 +80,12 @@ English_1914 %>% count(title)
 Italian = rbind(Italian_1200, Italian_1400, Italian_1550, Italian_1700, Italian_1815, Italian_1915)
 Spanish = rbind(Spanish_1400, Spanish_1600, Spanish_1700, Spanish_1800, Spanish_1850, Spanish_1900)
 English = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
+
+
+library(tidytext)
+English_tidy <- English %>%
+  unnest_tokens(word, text)
+Spanish_tidy <- Spanish %>%
+  unnest_tokens(word, text)
+Italian_tidy <- Italian %>%
+  unnest_tokens(word, text)
