@@ -83,9 +83,10 @@ English = rbind(English_1066, English_1500, English_1660, English_1785, English_
 
 
 library(tidytext)
-English_tidy <- English %>%
-  unnest_tokens(word, text)
+English_tidy <- English[1:5,] %>%
+  unnest_tokens(sentence, input = English, token = "sentences")
+head(English_tidy)
 Spanish_tidy <- Spanish %>%
-  unnest_tokens(word, text)
+  unnest_tokens(word, text, token = "sentences")
 Italian_tidy <- Italian %>%
   unnest_tokens(word, text)
