@@ -84,11 +84,11 @@ English = rbind(English_1066, English_1500, English_1660, English_1785, English_
 # find a better way to tokenize, exclude number?
 # Code derived from www.tidytextmining.com/ngrams.html
 create_ngram = function(books, number) {
+  colnames = paste0("word", 1:number)
   bigrams = books %>% 
     unnest_tokens(output = bigram, input = text, token = "ngrams", n = number) %>% 
-    # general function
-    separate(bigram, c("word1", "word2"), sep = " ") %>% 
-    count(word1, word2, sort = TRUE)
+    separate(bigram, colnames, sep = " ") %>% 
+    plyr::count(colnames)
   return (bigrams)
 }
 
