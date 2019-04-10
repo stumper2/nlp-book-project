@@ -83,15 +83,16 @@ English = rbind(English_1066, English_1500, English_1660, English_1785, English_
 
 # find a better way to tokenize, exclude number?
 # Code derived from www.tidytextmining.com/ngrams.html
-create_ngram = function(books, number) {
-  bigrams = books %>% 
-    unnest_tokens(output = bigram, input = text, token = "ngrams", n = number) %>% 
-    # general function
-    separate(bigram, c("word1", "word2"), sep = " ") %>% 
-    count(word1, word2, sort = TRUE)
-  return (bigrams)
+create_ngram_model = function(books, number) {
+  colnames = paste0("word", 1:number)
+  ngram = books %>% 
+    unnest_tokens(output = ngram, input = text, token = "ngrams", n = number) %>% 
+    separate(ngram, colnames, sep = " ") %>% 
+    plyr::count(colnames)
+  return (ngram)
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 library(tidytext)
 English_tidy <- English[1:5,] %>%
@@ -106,3 +107,12 @@ en_bigrams = create_ngram(English, 2)
 es_bigrams = create_ngram(Spanish, 2)
 it_bigrams = create_ngram(Italian, 2)
 >>>>>>> a8a24ff3d3b610888fb23cb3a6bf801885daa31a
+=======
+en_bigrams = create_ngram_model(English, 2)
+es_bigrams = create_ngram_model(Spanish, 2)
+it_bigrams = create_ngram_model(Italian, 2)
+
+en_trigrams = create_ngram_model(English, 3)
+es_trigrams = create_ngram_model(Spanish, 3)
+it_trigrams = create_ngram_model(Italian, 3)
+>>>>>>> 1cdf4f20b3fbb7782feb157853f0dcd45c8417cd
