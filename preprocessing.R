@@ -1,7 +1,7 @@
 #install.packages(c("dplyr", "gutenbergr"))
 library(gutenbergr)
 library(dplyr)
-
+library(tidyr)
 
 #Italian Books
 
@@ -81,11 +81,17 @@ Italian = rbind(Italian_1200, Italian_1400, Italian_1550, Italian_1700, Italian_
 Spanish = rbind(Spanish_1400, Spanish_1600, Spanish_1700, Spanish_1800, Spanish_1850, Spanish_1900)
 English = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
 
+# find a better way to tokenize, exclude number?
+# Code derived from www.tidytextmining.com/ngrams.html
+create_ngram = function(books, number) {
+  bigrams = books %>% 
+    unnest_tokens(output = bigram, input = text, token = "ngrams", n = number) %>% 
+    # general function
+    separate(bigram, c("word1", "word2"), sep = " ") %>% 
+    count(word1, word2, sort = TRUE)
+  return (bigrams)
+}
 
-library(tidytext)
-English_tidy <- English %>%
-  unnest_tokens(word, text)
-Spanish_tidy <- Spanish %>%
-  unnest_tokens(word, text)
-Italian_tidy <- Italian %>%
-  unnest_tokens(word, text)
+en_bigrams = create_ngram(English, 2)
+es_bigrams = create_ngram(Spanish, 2)
+it_bigrams = create_ngram(Italian, 2)
