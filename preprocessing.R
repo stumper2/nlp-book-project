@@ -1,10 +1,7 @@
 #install.packages(c("dplyr", "gutenbergr"))
 library(gutenbergr)
-library(dplyr)
-library(tidyr)
 
 #Italian Books
-
 Italian_1200_id = c(1012, 997, 1009, 999, 1011, 1010, 998, 1000, 29977, 26961)
 Italian_1200_id = c(1000, 29977, 26961)
 Italian_1400_id = c(57780, 3747, 50306, 57787, 46599, 56498, 45126)
@@ -34,7 +31,6 @@ Spanish_1700 = gutenberg_download(Spanish_1700_id, meta_fields = "title")
 Spanish_1800 = gutenberg_download(Spanish_1800_id, meta_fields = "title")
 Spanish_1850 = gutenberg_download(Spanish_1850_id, meta_fields = "title")
 Spanish_1900 = gutenberg_download(Spanish_1900_id, meta_fields = "title")
-
 
 #English Books
 English_1066_id = c(14305,17400,22120,16845,17179,14568)
@@ -80,22 +76,3 @@ English_1914 %>% count(title)
 Italian = rbind(Italian_1200, Italian_1400, Italian_1550, Italian_1700, Italian_1815, Italian_1915)
 Spanish = rbind(Spanish_1400, Spanish_1600, Spanish_1700, Spanish_1800, Spanish_1850, Spanish_1900)
 English = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
-
-# find a better way to tokenize, exclude number?
-# Code derived from www.tidytextmining.com/ngrams.html
-create_ngram_model = function(books, number) {
-  colnames = paste0("word", 1:number)
-  ngram = books %>% 
-    unnest_tokens(output = ngram, input = text, token = "ngrams", n = number) %>% 
-    separate(ngram, colnames, sep = " ") %>% 
-    plyr::count(colnames)
-  return (ngram)
-}
-
-en_bigrams = create_ngram_model(English, 2)
-es_bigrams = create_ngram_model(Spanish, 2)
-it_bigrams = create_ngram_model(Italian, 2)
-
-en_trigrams = create_ngram_model(English, 3)
-es_trigrams = create_ngram_model(Spanish, 3)
-it_trigrams = create_ngram_model(Italian, 3)
