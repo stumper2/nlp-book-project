@@ -76,3 +76,7 @@ English_1914 %>% count(title)
 Italian = rbind(Italian_1200, Italian_1400, Italian_1550, Italian_1700, Italian_1815, Italian_1915)
 Spanish = rbind(Spanish_1400, Spanish_1600, Spanish_1700, Spanish_1800, Spanish_1850, Spanish_1900)
 English = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
+
+# write.csv(English, "data/English.csv")
+# write.csv(Spanish, "data/Spanish.csv")
+# write.csv(Italian, "data/Italian.csv")
