@@ -1,7 +1,11 @@
+#install.packages("shinythemes")
 library(shiny)
+library(shinythemes)
 
-shinyUI(fluidPage(# Application title
-  titlePanel("Text Modeling"),
+shinyUI(
+  fluidPage(# Application title
+  theme = shinytheme("flatly"),
+  titlePanel("Story Analysis and Modeling"),
   navbarPage(
     "Text Modeling",
     tabPanel("Analysis",
