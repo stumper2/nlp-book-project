@@ -1,7 +1,11 @@
+#install.packages("shinythemes")
 library(shiny)
+library(shinythemes)
 
-shinyUI(fluidPage(# Application title
-  titlePanel("Text Modeling"),
+shinyUI(
+  fluidPage(# Application title
+  theme = shinytheme("flatly"),
+  titlePanel("Story Analysis and Modeling"),
   navbarPage(
     "Text Modeling",
     tabPanel("Analysis",
@@ -14,15 +18,22 @@ shinyUI(fluidPage(# Application title
                    multiple = FALSE,
                    accept = c(".txt")
                  ),
+                 # #Just in case the user doesn't have a text file of a story, they can look one up
+                 # "or",
+                 # textInput(
+                 #   "GutenbergID",
+                 #  a("Type in a Gutenberg ID", href = "http://www.gutenberg.org/"),
+                 #   value = ""
+                 # ),
                  selectInput(
-                   "selection",
+                   "number",
                    "Choose a language model:",
                    choices = c("Word Bigram", 
                                "Word Trigram",
                                "Word Quadgram")
                  ),
                  selectInput(
-                   "selection",
+                   "Model",
                    "Choose a smoothing method:",
                    choices = c("Laplace Smoothing", 
                                "Good Turing's Smoothing")
