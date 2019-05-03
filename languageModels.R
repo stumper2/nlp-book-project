@@ -3,6 +3,7 @@ library(dplyr)
 library(tidyr)
 library(tidytext)
 library(readtext)
+library(purrrlyr)
 
 # find a better way to tokenize, exclude number?
 # Code derived from www.tidytextmining.com/ngrams.html
