@@ -15,10 +15,15 @@ create_ngram_model = function(books, number = 2) {
   return (ngram)
 }
 
-# this is laplace smoothing
-ngram_evaluator_laplace = function(filename, model, number = 2) {
+ngram_prob(filename, model, eval_function, number = 2) {
   testfile = readtext(filename)
   test_ngram = create_ngram_model(testfile, number)
+  return (exp(1)^eval_function(test_ngram, model, number))
+}
+
+# this is laplace smoothing
+# returns log(probability), e^return_value to get the probability
+ngram_evaluator_laplace = function(test_ngram, model, number = 2) {
   V = length(unique(model[["word1"]]))
   prob = 0
   
@@ -47,8 +52,57 @@ ngram_evaluator_laplace = function(filename, model, number = 2) {
   return (prob)
 }
 
-# will implement good turing's smoothing later
-# and interpolation if I have time 
+# if x is large enough just consider itself
+# Katz gave me 5
+get_const = function(freq, freq_array) {
+  if (freq < 5) {
+    # because array starts from 1
+    return ((freq + 1) * freq_array[freq] / freq_array[freq - 1])
+  } else {
+    return (freq)
+  }
+}
+
+# this is good turing smoothing
+# returns log(probability), e^return_value to get the probability
+ngram_evaluator_gt = function(test_ngram, model, number = 2) {
+  V = length(unique(model[["word1"]]))
+  possible_pairs = V^number
+  seen_pairs = nrow(model)
+  unseen_pairs = possible_pairs - seen_pairs
+  prob = 0
+  
+  freq_array = c(unseen_pairs,
+                 nrow(subset(model, freq == 1)),
+                 nrow(subset(model, freq == 2)),
+                 nrow(subset(model, freq == 3)),
+                 nrow(subset(model, freq == 4)),
+                 nrow(subset(model, freq == 5)))
+  
+  for (row in 1:nrow(test_ngram)) {
+    target = test_ngram[row,]
+    targetdf = model[target[[1]] == model[[1]],]
+    
+    i = 1
+    # while length(targetdf) > 0
+    while (length(targetdf) & (i <= (number - 1))) { 
+      targetdf = targetdf[target[[i]] == targetdf[[i]],]
+      i = i + 1
+    }
+    
+    num_value = targetdf[target[[number]] == targetdf[[number]],]$freq
+    
+    if (length(num_value) == 0) {
+      num_value = 0
+    }
+    
+    numer = get_const(num_value, freq_array)
+    denom = seen_pairs
+    prob = prob + log(numer/denom) * target$freq
+  }
+  
+  return (prob)
+}
 
 # if n > 2, give option for backoff
 # get lambda
@@ -59,6 +113,14 @@ ngram_evaluator_laplace = function(filename, model, number = 2) {
 
 # n-gram models are saved in data folder, but it exceeds 100 MB
 # Thus, cannot commit to github
+# run this program to get the files
+
+# en_unigrams = create_ngram_model(English, 1)
+# es_unigrams = create_ngram_model(Spanish, 1)
+# it_unigrams = create_ngram_model(Italian, 1)
+# write.csv(en_unigrams, "data/en_unigram.csv")
+# write.csv(es_unigrams, "data/es_unigram.csv")
+# write.csv(it_unigrams, "data/it_unigram.csv")
 
 # en_bigrams = create_ngram_model(English, 2)
 # es_bigrams = create_ngram_model(Spanish, 2)
