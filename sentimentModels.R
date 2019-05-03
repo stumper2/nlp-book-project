@@ -6,16 +6,16 @@ library(tidytext)
 library(readtext)
 library(syuzhet)
 
-sent_modeling = function(testfile, language_name, type) {
-  #testfile = readtext(filename)
+sent_modeling = function(filename, language_name, type = "positivity") {
+  testfile = readtext(filename)
   test_sent = testfile %>% 
     unnest_tokens(output = word, input = text, token = "words")
   if (type == "emotion") {
     table = get_sentiment_dictionary("nrc", language_name) %>% 
       filter(sentiment != "positive" & sentiment != "negative")
   } else {
-    table2 = get_sentiment_dictionary("nrc", language_name) %>% 
-      filter(sentiment == "positive" & sentiment == "negative")
+    table = get_sentiment_dictionary("nrc", language_name) %>% 
+      filter(sentiment == "positive" | sentiment == "negative")
   }
   
   sent_analysis(test_sent, table)
