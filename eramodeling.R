@@ -12,7 +12,7 @@ era_analysis = function(text, language, modeling) {
     stopped = as.data.frame(stopwords(kind = "en"))
     colnames(stopped) <- c("word")
   }
-  
+
   if(language == "Italian"){
     italianyears = c("1200","1400","1550","1700","1815","1915")
     Italian_1200$year = rep("1200", nrow(Italian_1200))
