@@ -20,7 +20,7 @@ row_wise_laplace = function(target, model, V, number = 2) {
   targetdf = model[model$word1 == target$word1,]
   
   i = 2
-  while (length(targetdf) & (i < (number - 1))) { 
+  while (length(targetdf) & (i <= (number - 1))) { 
     targetdf = targetdf[targetdf[[i]] == target[[i]],]
     i = i + 1
   }
@@ -68,7 +68,7 @@ row_wise_gt = function(target, model, V, freq_arr, number = 2) {
   seen_pairs = nrow(model)
   
   i = 2
-  while (nrow(targetdf) & (i < (number - 1))) { 
+  while (nrow(targetdf) & (i <= (number - 1))) { 
     targetdf = targetdf[targetdf[[i]] == target[[i]],]
     i = i + 1
   }
