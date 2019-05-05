@@ -18,12 +18,12 @@ langauge_viz = function(filename, ngram) {
     gt_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_trigram.csv")[-1], ngram_evaluator_gt, number = 3)
   }
   if (str_detect(ngram, pattern = "Quad")) {
-    lap_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_quadgram.csv")[-1], ngram_evaluator_laplace, number = 4)
-    lap_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_quadgram.csv")[-1], ngram_evaluator_laplace, number = 4)
-    lap_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_quadgram.csv")[-1], ngram_evaluator_laplace, number = 4)
-    gt_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_quadgram.csv")[-1], ngram_evaluator_gt, number = 4)
-    gt_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_quadgram.csv")[-1], ngram_evaluator_gt, number = 4)
-    gt_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_quadgram.csv")[-1], ngram_evaluator_gt, number = 4)
+    lap_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_qgram.csv")[-1], ngram_evaluator_laplace, number = 4)
+    lap_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_qgram.csv")[-1], ngram_evaluator_laplace, number = 4)
+    lap_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_qgram.csv")[-1], ngram_evaluator_laplace, number = 4)
+    gt_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_qgram.csv")[-1], ngram_evaluator_gt, number = 4)
+    gt_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_qgram.csv")[-1], ngram_evaluator_gt, number = 4)
+    gt_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_qgram.csv")[-1], ngram_evaluator_gt, number = 4)
   }
   
   lap_df = data_frame("Prob" = c(lap_english_prob, lap_italian_prob, lap_spanish_prob), "Language" = c("English", "Italian", "Spanish"))
