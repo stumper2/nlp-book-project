@@ -4,8 +4,9 @@ library(tidyr)
 library(ggplot2)
 library(tidytext)
 library(readtext)
+# install.packages("syuzhet")
 library(syuzhet)
-
+#type = positivity or emotion
 sent_modeling = function(filename, language_name, type = "positivity") {
   testfile = readtext(filename)
   test_sent = testfile %>% 
@@ -30,8 +31,8 @@ sent_analysis = function(test_sent, model) {
   return (assigned_v)
 }
 
-# example:
-it = sent_modeling("italian.txt", "italian", "emotion")
-ggplot(it) +
-  geom_bar(aes(x =sentiment)) # + title and color and stuff
-  
+# # example:
+# it = sent_modeling("italian.txt", "italian", "emotion")
+# ggplot(it) +
+#   geom_bar(aes(x =sentiment)) # + title and color and stuff
+#   

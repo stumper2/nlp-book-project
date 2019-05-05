@@ -120,46 +120,58 @@ ngram_prob = function(filename, model, func, number = 2) {
   func(test_ngram, model, number)
 }
 
+##Model Variables
+en_bigram = read.csv("../data/en_bigram.csv")[-1]
+it_bigram = read.csv("../data/it_bigram.csv")[-1]
+es_bigram = read.csv("../data/es_bigram.csv")[-1]
+en_trigram = read.csv("../data/en_trigram.csv")[-1]
+it_trigram = read.csv("../data/it_trigram.csv")[-1]
+es_trigram = read.csv("../data/es_trigram.csv")[-1]
+en_qgram = read.csv("../data/en_qgram.csv")[-1]
+it_qgram = read.csv("../data/it_qgram.csv")[-1]
+es_qgram = read.csv("../data/es_qgram.csv")[-1]
+
 langauge_viz = function(filename, ngram) {
   # filename = file$datapath
+  print("loaded in the file...")
   #probable a better way to do this, but this'll do for now
   if (str_detect(ngram, pattern = "Bi")){
-    lap_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_bigram.csv")[-1], ngram_evaluator_laplace)
-    lap_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_bigram.csv")[-1], ngram_evaluator_laplace)
-    lap_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_bigram.csv")[-1], ngram_evaluator_laplace)
-    gt_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_bigram.csv")[-1], ngram_evaluator_gt)
-    gt_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_bigram.csv")[-1], ngram_evaluator_gt)
-    gt_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_bigram.csv")[-1], ngram_evaluator_gt)
+    lap_english_prob = ngram_prob(filename, en_bigram, ngram_evaluator_laplace)
+    lap_italian_prob = ngram_prob(filename, it_bigram, ngram_evaluator_laplace)
+    lap_spanish_prob = ngram_prob(filename, es_bigram, ngram_evaluator_laplace)
+    gt_english_prob = ngram_prob(filename, en_bigram, ngram_evaluator_gt)
+    gt_italian_prob = ngram_prob(filename, it_bigram, ngram_evaluator_gt)
+    gt_spanish_prob = ngram_prob(filename, es_bigram, ngram_evaluator_gt)
   }
   
   if (str_detect(ngram, pattern = "Tri")){
-    lap_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_trigram.csv")[-1], ngram_evaluator_laplace, number = 3)
-    lap_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_trigram.csv")[-1], ngram_evaluator_laplace, number = 3)
-    lap_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_trigram.csv")[-1], ngram_evaluator_laplace, number = 3)
-    gt_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_trigram.csv")[-1], ngram_evaluator_gt, number = 3)
-    gt_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_trigram.csv")[-1], ngram_evaluator_gt, number = 3)
-    gt_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_trigram.csv")[-1], ngram_evaluator_gt, number = 3)
+    lap_english_prob = ngram_prob(filename, en_trigram, ngram_evaluator_laplace, number = 3)
+    lap_italian_prob = ngram_prob(filename, it_trigram, ngram_evaluator_laplace, number = 3)
+    lap_spanish_prob = ngram_prob(filename, es_trigram, ngram_evaluator_laplace, number = 3)
+    gt_english_prob = ngram_prob(filename, en_trigram, ngram_evaluator_gt, number = 3)
+    gt_italian_prob = ngram_prob(filename, it_trigram, ngram_evaluator_gt, number = 3)
+    gt_spanish_prob = ngram_prob(filename, es_trigram, ngram_evaluator_gt, number = 3)
   }
   
   if (str_detect(ngram, pattern = "Quad")) {
-    lap_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_qgram.csv")[-1], ngram_evaluator_laplace, number = 4)
-    lap_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_qgram.csv")[-1], ngram_evaluator_laplace, number = 4)
-    lap_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_qgram.csv")[-1], ngram_evaluator_laplace, number = 4)
-    gt_english_prob = ngram_prob(filename, read.csv("./STAT 385/data/en_qgram.csv")[-1], ngram_evaluator_gt, number = 4)
-    gt_italian_prob = ngram_prob(filename, read.csv("./STAT 385/data/it_qgram.csv")[-1], ngram_evaluator_gt, number = 4)
-    gt_spanish_prob = ngram_prob(filename, read.csv("./STAT 385/data/es_qgram.csv")[-1], ngram_evaluator_gt, number = 4)
+    lap_english_prob = ngram_prob(filename, en_qgram, ngram_evaluator_laplace, number = 4)
+    lap_italian_prob = ngram_prob(filename, it_qgram, ngram_evaluator_laplace, number = 4)
+    lap_spanish_prob = ngram_prob(filename, es_qgram, ngram_evaluator_laplace, number = 4)
+    gt_english_prob = ngram_prob(filename, en_qgram, ngram_evaluator_gt, number = 4)
+    gt_italian_prob = ngram_prob(filename, it_qgram, ngram_evaluator_gt, number = 4)
+    gt_spanish_prob = ngram_prob(filename, es_qgram, ngram_evaluator_gt, number = 4)
   }
-  
+  print("made all the probs!")
   lap_df = data_frame("Prob" = c(lap_english_prob, lap_italian_prob, lap_spanish_prob), "Language" = c("English", "Italian", "Spanish"))
   gt_df = data_frame("Prob" = c(gt_english_prob, gt_italian_prob, gt_spanish_prob), "Language" = c("English", "Italian", "Spanish"))
   
-  ggplot(lap_df) +
-    aes(x = Language, y =Prob, fill = Language) +
-    labs(title = "Language projection using laplace smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
-    geom_col()
-  
-  ggplot(gt_df) +
-    aes(x = Language, y = Prob, fill = Language) +
-    labs(title = "Language projection using Good Turings smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
-    geom_col()
+  # ggplot(lap_df) +
+  #   aes(x = Language, y = Prob, fill = Language) +
+  #   labs(title = "Language projection using laplace smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
+  #   geom_col()
+  # 
+  # ggplot(gt_df) +
+  #   aes(x = Language, y = Prob, fill = Language) +
+  #   labs(title = "Language projection using Good Turings smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
+  #   geom_col()
 }

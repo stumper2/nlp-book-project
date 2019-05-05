@@ -9,11 +9,11 @@ server <- function(input, output) {
     ggplot(it) +
       geom_bar(aes(x =sentiment))
   })
-}
 
  output$plot <- renderPlot({
    create_wordcloud(it)
  })
 
+}
 # Run the application 
 shinyApp(ui = ui, server = server)
