@@ -3,6 +3,7 @@ library(dplyr)
 library(tidyr)
 library(tidytext)
 library(readtext)
+library(purrrlyr)
 
 # find a better way to tokenize, exclude number?
 # Code derived from www.tidytextmining.com/ngrams.html
@@ -15,10 +16,31 @@ create_ngram_model = function(books, number = 2) {
   return (ngram)
 }
 
-ngram_prob(filename, model, eval_function, number = 2) {
-  testfile = readtext(filename)
-  test_ngram = create_ngram_model(testfile, number)
-  return (exp(1)^eval_function(test_ngram, model, number))
+row_wise_laplace = function(target, model, V, number = 2) {
+  targetdf = model[model$word1 == target$word1,]
+  
+  i = 2
+  while (length(targetdf) & (i <= (number - 1))) { 
+    targetdf = targetdf[targetdf[[i]] == target[[i]],]
+    i = i + 1
+  }
+  
+  numer = 1
+  num_value = 0
+  denom = V
+  
+  if (nrow(targetdf) > 0) {
+    targetdf_n = targetdf[targetdf[[number]] == target[[number]],]
+    
+    if (nrow(targetdf_n)) {
+      num_value = targetdf_n$freq
+    }
+    
+    numer = 1 + num_value
+    denom = V + sum(targetdf$freq)
+  }
+  
+  return (log(numer/denom) * target$freq)
 }
 
 # this is laplace smoothing
@@ -26,30 +48,8 @@ ngram_prob(filename, model, eval_function, number = 2) {
 ngram_evaluator_laplace = function(test_ngram, model, number = 2) {
   V = length(unique(model[["word1"]]))
   prob = 0
-  
-  for (row in 1:nrow(test_ngram)) {
-    target = test_ngram[row,]
-    targetdf = model[target[[1]] == model[[1]],]
-    
-    i = 1
-    # while length(targetdf) > 0
-    while (length(targetdf) & (i <= (number - 1))) { 
-      targetdf = targetdf[target[[i]] == targetdf[[i]],]
-      i = i + 1
-    }
-    
-    num_value = targetdf[target[[number]] == targetdf[[number]],]$freq
-    numer = 1
-    
-    if (length(num_value) > 0) {
-      numer = numer + num_value
-    }
-    
-    denom = V + sum(targetdf$freq)
-    prob = prob + log(numer/denom) * target$freq
-  }
-  
-  return (prob)
+  comb = test_ngram %>% by_row(row_wise_laplace, model = model, V = V, number = number, .collate = "rows")
+  return (sum(comb$.out))
 }
 
 # if x is large enough just consider itself
@@ -63,14 +63,44 @@ get_const = function(freq, freq_array) {
   }
 }
 
+row_wise_gt = function(target, model, V, freq_arr, number = 2) {
+  targetdf = model[model$word1 == target$word1,]
+  seen_pairs = nrow(model)
+  
+  i = 2
+  while (nrow(targetdf) & (i <= (number - 1))) { 
+    targetdf = targetdf[targetdf[[i]] == target[[i]],]
+    i = i + 1
+  }
+  
+  denom = seen_pairs
+  num_value = 0
+  numer = 0
+  
+  if (nrow(targetdf) > 0) {
+    targetdf_n = targetdf[targetdf[[number]] == target[[number]],]
+    denom = sum(targetdf$freq)
+      
+    if (nrow(targetdf_n) > 0) {
+      num_value = targetdf_n$freq
+    }
+  }
+  
+  if (num_value < 5) {
+    numer = (num_value + 1) * freq_arr[num_value + 2] / freq_arr[num_value + 1]
+  } else {
+    numer = num_value
+  }
+  
+  return (log(numer/denom) * target$freq)
+}
+
 # this is good turing smoothing
 # returns log(probability), e^return_value to get the probability
 ngram_evaluator_gt = function(test_ngram, model, number = 2) {
   V = length(unique(model[["word1"]]))
   possible_pairs = V^number
-  seen_pairs = nrow(model)
-  unseen_pairs = possible_pairs - seen_pairs
-  prob = 0
+  unseen_pairs = possible_pairs - nrow(model)
   
   freq_array = c(unseen_pairs,
                  nrow(subset(model, freq == 1)),
@@ -79,29 +109,15 @@ ngram_evaluator_gt = function(test_ngram, model, number = 2) {
                  nrow(subset(model, freq == 4)),
                  nrow(subset(model, freq == 5)))
   
-  for (row in 1:nrow(test_ngram)) {
-    target = test_ngram[row,]
-    targetdf = model[target[[1]] == model[[1]],]
-    
-    i = 1
-    # while length(targetdf) > 0
-    while (length(targetdf) & (i <= (number - 1))) { 
-      targetdf = targetdf[target[[i]] == targetdf[[i]],]
-      i = i + 1
-    }
-    
-    num_value = targetdf[target[[number]] == targetdf[[number]],]$freq
-    
-    if (length(num_value) == 0) {
-      num_value = 0
-    }
-    
-    numer = get_const(num_value, freq_array)
-    denom = seen_pairs
-    prob = prob + log(numer/denom) * target$freq
-  }
+  comb = test_ngram %>% by_row(row_wise_gt, model = model, V = V, freq_arr = freq_array, number = number, .collate = "rows")
   
-  return (prob)
+  return (sum(comb$.out))
+}
+
+ngram_prob = function(filename, model, func, number = 2) {
+  testfile = readtext(filename)
+  test_ngram = create_ngram_model(testfile, number)
+  func(test_ngram, model, number)
 }
 
 # if n > 2, give option for backoff

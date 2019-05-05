@@ -75,52 +75,8 @@ English_1914 %>% count(title)
 # Combine
 Italian = rbind(Italian_1200, Italian_1400, Italian_1550, Italian_1700, Italian_1815, Italian_1915)
 Spanish = rbind(Spanish_1400, Spanish_1600, Spanish_1700, Spanish_1800, Spanish_1850, Spanish_1900)
-<<<<<<< HEAD
-<<<<<<< HEAD
-English = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
-
-# find a better way to tokenize, exclude number?
-# Code derived from www.tidytextmining.com/ngrams.html
-create_ngram_model = function(books, number) {
-  colnames = paste0("word", 1:number)
-  ngram = books %>% 
-    unnest_tokens(output = ngram, input = text, token = "ngrams", n = number) %>% 
-    separate(ngram, colnames, sep = " ") %>% 
-    plyr::count(colnames)
-  return (ngram)
-}
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-library(tidytext)
-English_tidy <- English[1:5,] %>%
-  unnest_tokens(sentence, input = English, token = "sentences")
-head(English_tidy)
-Spanish_tidy <- Spanish %>%
-  unnest_tokens(word, text, token = "sentences")
-Italian_tidy <- Italian %>%
-  unnest_tokens(word, text)
-=======
-en_bigrams = create_ngram(English, 2)
-es_bigrams = create_ngram(Spanish, 2)
-it_bigrams = create_ngram(Italian, 2)
->>>>>>> a8a24ff3d3b610888fb23cb3a6bf801885daa31a
-=======
-en_bigrams = create_ngram_model(English, 2)
-es_bigrams = create_ngram_model(Spanish, 2)
-it_bigrams = create_ngram_model(Italian, 2)
-
-en_trigrams = create_ngram_model(English, 3)
-es_trigrams = create_ngram_model(Spanish, 3)
-it_trigrams = create_ngram_model(Italian, 3)
->>>>>>> 1cdf4f20b3fbb7782feb157853f0dcd45c8417cd
-=======
-English = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
->>>>>>> 76634e9dc44355af1068e18f99f05c85de7ba6f9
-=======
 English = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
 
 # write.csv(English, "data/English.csv")
 # write.csv(Spanish, "data/Spanish.csv")
 # write.csv(Italian, "data/Italian.csv")
->>>>>>> 1bc2c37211b389a3434c78e75b71d3bc64ae7a40
