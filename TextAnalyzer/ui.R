@@ -2,14 +2,14 @@
 library(shiny)
 library(shinythemes)
 
-shinyUI(
-  fluidPage(# Application title
+shinyUI(fluidPage(
+  # Application title
   theme = shinytheme("flatly"),
   titlePanel("Text Analysis and Modeling"),
   navbarPage(
     "Text Modeling",
     tabPanel("Language", sidebarLayout(
-      # Sidebar with a slider and selection inputs
+      #Side bar for data inputs
       sidebarPanel(
         fileInput(
           "selection",
@@ -20,15 +20,10 @@ shinyUI(
         selectInput(
           "number",
           "Choose a language model:",
-          choices = c("Word Bigram", 
+          choices = c("Word Bigram",
                       "Word Trigram",
                       "Word Quadgram")
         ),
-        # selectInput(
-        #   "Model",
-        #   "Choose a smoothing method:",
-        #   choices = c("Laplace Smoothing", 
-        #               "Good Turing's Smoothing")
         hr(),
         actionButton("update", "Update")
       ),
@@ -42,6 +37,29 @@ shinyUI(
       )
     ),
     tabPanel("Era"),
-    tabPanel("Sentiment", plotOutput("phonePlot"), plotOutput("plot"))
+    tabPanel("Sentiment", sidebarLayout(
+      #Side bar for data inputs
+      sidebarPanel(
+        fileInput(
+          "selection",
+          "Choose a Text File to Analyze",
+          multiple = FALSE,
+          accept = c(".txt")
+        ),
+        selectInput(
+          "number",
+          "Choose a language model:",
+          choices = c("Word Bigram",
+                      "Word Trigram",
+                      "Word Quadgram")
+        ),
+        hr(),
+        actionButton("update", "Update")
+      ),
+      
+      mainPanel(
+             plotOutput("phonePlot"), 
+             plotOutput("plot")))
+      )
   )
 ))
