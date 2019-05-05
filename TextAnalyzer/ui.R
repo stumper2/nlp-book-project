@@ -30,14 +30,14 @@ shinyUI(
         #   choices = c("Laplace Smoothing", 
         #               "Good Turing's Smoothing")
         hr(),
-        actionButton("update", "Change")
+        actionButton("update", "Update")
       ),
       
-      mainPanel("Language Probability Bar Plot",
+      mainPanel(#"Language Probability Bar Plot",
                 #plotOuput(), 
                 # textOutput("contents"),
-                plotOutput("Lap_plot")
-                # ,plotOutput("gt_plot")
+                plotOutput("lap_plot"),
+                plotOutput("gt_plot")
                 )
       )
     ),

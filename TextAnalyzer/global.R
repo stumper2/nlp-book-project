@@ -1,8 +1,11 @@
 library(plyr)
 library(dplyr)
 library(tidyr)
+library(stringr)
+library(ggplot2)
 library(tidytext)
 library(readtext)
+
 library(purrrlyr)
 
 # find a better way to tokenize, exclude number?
@@ -131,9 +134,10 @@ en_qgram = readRDS("../data/en_qgram.rds")
 it_qgram = readRDS("../data/it_qgram.rds")
 es_qgram = readRDS("../data/es_qgram.rds")
 
-langauge_viz = function(filename, ngram) {
-  # filename = file$datapath
+langauge_viz = function(filename, ngram, methodNumber) {
+
   print("loaded in the file...")
+
   #probable a better way to do this, but this'll do for now
   if (str_detect(ngram, pattern = "Bi")){
     lap_english_prob = ngram_prob(filename, en_bigram, ngram_evaluator_laplace)
@@ -153,7 +157,7 @@ langauge_viz = function(filename, ngram) {
     gt_spanish_prob = ngram_prob(filename, es_trigram, ngram_evaluator_gt, number = 3)
   }
   
-  if (str_detect(ngram, pattern = "Quad")) {
+  if (str_detect(ngram, pattern = "Q")) {
     lap_english_prob = ngram_prob(filename, en_qgram, ngram_evaluator_laplace, number = 4)
     lap_italian_prob = ngram_prob(filename, it_qgram, ngram_evaluator_laplace, number = 4)
     lap_spanish_prob = ngram_prob(filename, es_qgram, ngram_evaluator_laplace, number = 4)
@@ -165,13 +169,26 @@ langauge_viz = function(filename, ngram) {
   lap_df = data_frame("Prob" = c(lap_english_prob, lap_italian_prob, lap_spanish_prob), "Language" = c("English", "Italian", "Spanish"))
   gt_df = data_frame("Prob" = c(gt_english_prob, gt_italian_prob, gt_spanish_prob), "Language" = c("English", "Italian", "Spanish"))
   
-  # ggplot(lap_df) +
-  #   aes(x = Language, y = Prob, fill = Language) +
-  #   labs(title = "Language projection using laplace smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
-  #   geom_col()
-  # 
-  # ggplot(gt_df) +
-  #   aes(x = Language, y = Prob, fill = Language) +
-  #   labs(title = "Language projection using Good Turings smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
-  #   geom_col()
+  if (methodNumber == 1) {
+  print("making laplace graph!")
+  lap_graph = lap_df %>%
+    mutate(Minimum = ifelse(min(-Prob) == -Prob, T, F)) %>%
+      ggplot() +
+      aes(x = Language, y =-Prob, fill = Minimum) +
+      labs(title = "Language projection using laplace smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
+      geom_col() + 
+      scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
+  return(lap_graph)
+  }
+  if (methodNumber == 2) {
+  print("making gt graph!")
+  gt_graph = gt_df %>%
+    mutate(Minimum = ifelse(min(-Prob) == -Prob, T, F)) %>%
+      ggplot() +
+      aes(x = Language, y = -Prob, fill = Minimum) +
+      labs(title = "Language projection using Good Turings smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
+      geom_col() + 
+      scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
+  return(gt_graph)
+  }
 }
