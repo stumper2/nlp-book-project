@@ -2,8 +2,8 @@
 library(shiny)
 library(shinythemes)
 
-shinyUI(
-  fluidPage(# Application title
+shinyUI(fluidPage(
+  # Application title
   theme = shinytheme("flatly"),
   titlePanel("Text Analysis and Modeling"),
   navbarPage(
@@ -20,28 +20,68 @@ shinyUI(
         selectInput(
           "number",
           "Choose a language model:",
-          choices = c("Word Bigram", 
+          choices = c("Word Bigram",
                       "Word Trigram",
                       "Word Quadgram")
         ),
-        # selectInput(
-        #   "Model",
-        #   "Choose a smoothing method:",
-        #   choices = c("Laplace Smoothing", 
-        #               "Good Turing's Smoothing")
         hr(),
         actionButton("update", "Change")
       ),
       
       mainPanel("Language Probability Bar Plot",
-                #plotOuput(), 
+                #plotOuput(),
                 # textOutput("contents"),
                 plotOutput("Lap_plot")
-                # ,plotOutput("gt_plot")
-                )
-      )
-    ),
-    tabPanel("Era"),
-    tabPanel("Sentiment", plotOutput("phonePlot"), plotOutput("plot"))
-  )
-))
+                # ,plotOutput("gt_plot"))
+      )),
+      tabPanel("Era", sidebarLayout(
+        # Sidebar with a slider and selection inputs
+        sidebarPanel(
+          fileInput(
+            "selection",
+            "Choose a Text File to Analyze",
+            multiple = FALSE,
+            accept = c(".txt")
+          ),
+          selectInput(
+            "language",
+            "Choose a language:",
+            choices = c("English",
+                        "Spanish",
+                        "Italian")
+          ),
+          hr(),
+          actionButton("update", "Change")
+        ),
+        
+        mainPanel("Era Probability Bar Plot") #,
+        # plotOutput("Lap_plot")
+      )),
+      tabPanel("Sentiment", sidebarLayout(
+        # Sidebar with a slider and selection inputs
+        sidebarPanel(
+          fileInput(
+            "selection",
+            "Choose a Text File to Analyze",
+            multiple = FALSE,
+            accept = c(".txt")
+          ),
+          selectInput(
+            "language",
+            "Choose a language:",
+            choices = c("English",
+                        "Spanish",
+                        "Italian")
+          ),
+          hr(),
+          actionButton("update", "Change")
+        ),
+        
+        mainPanel(
+          "Era Probability Bar Plot",
+          plotOutput("phonePlot"),
+          plotOutput("plot")
+        )
+      ))
+    )
+  ))
