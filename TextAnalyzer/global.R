@@ -121,15 +121,15 @@ ngram_prob = function(filename, model, func, number = 2) {
 }
 
 ##Model Variables
-en_bigram = read.csv("../data/en_bigram.csv")[-1]
-it_bigram = read.csv("../data/it_bigram.csv")[-1]
-es_bigram = read.csv("../data/es_bigram.csv")[-1]
-en_trigram = read.csv("../data/en_trigram.csv")[-1]
-it_trigram = read.csv("../data/it_trigram.csv")[-1]
-es_trigram = read.csv("../data/es_trigram.csv")[-1]
-en_qgram = read.csv("../data/en_qgram.csv")[-1]
-it_qgram = read.csv("../data/it_qgram.csv")[-1]
-es_qgram = read.csv("../data/es_qgram.csv")[-1]
+en_bigram = readRDS("../data/en_bigram.rds")
+it_bigram = readRDS("../data/it_bigram.rds")
+es_bigram = readRDS("../data/es_bigram.rds")
+en_trigram = readRDS("../data/en_trigram.rds")
+it_trigram = readRDS("../data/it_trigram.rds")
+es_trigram = readRDS("../data/es_trigram.rds")
+en_qgram = readRDS("../data/en_qgram.rds")
+it_qgram = readRDS("../data/it_qgram.rds")
+es_qgram = readRDS("../data/es_qgram.rds")
 
 langauge_viz = function(filename, ngram) {
   # filename = file$datapath
