@@ -33,7 +33,7 @@ shinyUI(fluidPage(
                 # textOutput("contents"),
                 plotOutput("Lap_plot")
                 # ,plotOutput("gt_plot"))
-      )),
+      ))),
       tabPanel("Era", sidebarLayout(
         # Sidebar with a slider and selection inputs
         sidebarPanel(
@@ -81,7 +81,5 @@ shinyUI(fluidPage(
           "Era Probability Bar Plot",
           plotOutput("phonePlot"),
           plotOutput("plot")
-        )
-      ))
-    )
-  ))
+        )))
+  )))
