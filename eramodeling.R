@@ -7,7 +7,7 @@ era_analysis = function(text, language, modeling) {
     English_1785$year = rep("1785", nrow(English_1785))
     English_1832$year = rep("1832", nrow(English_1832))
     English_1901$year = rep("1901", nrow(English_1901))
-    English_1914$year = rep("1914", nrow(English_1914))
+    English_1914$year = rep("1901", nrow(English_1914))
     work = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
   }
   
@@ -47,11 +47,8 @@ era_analysis = function(text, language, modeling) {
   
   
   library(topicmodels)
-  if(language == 'English'){
-    topic_lda <- LDA(topic_dtm, k = 7, control = list(seed = 1234))
-  }else{
-    topic_lda <- LDA(topic_dtm, k = 6, control = list(seed = 1234))
-  }  
+  topic_lda <- LDA(topic_dtm, k = 6, control = list(seed = 1234))
+  
   topic_lda_td <- tidy(topic_lda)
   
   topic1 = filter(topic_lda_td, topic == 1)
@@ -60,11 +57,6 @@ era_analysis = function(text, language, modeling) {
   topic4 = filter(topic_lda_td, topic == 4)
   topic5 = filter(topic_lda_td, topic == 5)
   topic6 = filter(topic_lda_td, topic == 6)
-  
-  if(language == "English"){
-    topic7 = filter(topic_lda_td, topic == 7)
-  }
-  
   
   text_df = data.frame(text = text)
   wordcount = text_df %>% unnest_tokens(word, text) %>%
@@ -76,9 +68,6 @@ era_analysis = function(text, language, modeling) {
   topic5scores = inner_join(topic2, wordcount, by = term)
   topic6scores = inner_join(topic2, wordcount, by = term)
   
-  if(language == "English"){
-    topic7scores = inner_join(topic7, wordcount)
-  }
   
   topic1score = 0
   for (i in 1:nrow(topic1scores)) {
@@ -106,12 +95,6 @@ era_analysis = function(text, language, modeling) {
     topic6score = topic6score + topic6scores$count * topic6scores$beta
   }
   
-  if(language == "English"){
-    topic7score = 0
-    for (i in 1:nrow(topic7scores)) {
-      topic7score = topic7score + topic7scores$count * topic7scores$beta
-    }
-  }
   
   topic_lda_gamma <- tidy(topic_lda, matrix = "gamma")
   book_topics <- topic_lda_gamma %>%
