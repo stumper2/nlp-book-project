@@ -7,10 +7,12 @@ era_analysis = function(text, language, modeling) {
     English_1785$year = rep("1785", nrow(English_1785))
     English_1832$year = rep("1832", nrow(English_1832))
     English_1901$year = rep("1901", nrow(English_1901))
-    English_1914$year = rep("1914", nrow(English_1914))
+    English_1914$year = rep("1901", nrow(English_1914))
     work = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
+    stopped = as.data.frame(stopwords(kind = "en"))
+    colnames(stopped) <- c("word")
   }
-  
+
   if(language == "Italian"){
     italianyears = c("1200","1400","1550","1700","1815","1915")
     Italian_1200$year = rep("1200", nrow(Italian_1200))
@@ -20,6 +22,8 @@ era_analysis = function(text, language, modeling) {
     Italian_1815$year = rep("1815", nrow(Italian_1815))
     Italian_1915$year = rep("1915", nrow(Italian_1915))
     work = rbind(Italian_1200,Italian_1400,Italian_1550,Italian_1700,Italian_1815,Italian_1915)
+    stopped = as.data.frame(stopwords(kind = "it"))
+    colnames(stopped) <- c("word")
   }
   
   if(language == "Spanish"){
@@ -31,6 +35,8 @@ era_analysis = function(text, language, modeling) {
     Spanish_1850$year = rep("1850", nrow(Spanish_1850))
     Spanish_1900$year = rep("1900", nrow(Spanish_1900))
     work = rbind(Spanish_1400,Spanish_1600,Spanish_1700,Spanish_1800,Spanish_1850,Spanish_1900)
+    stopped = as.data.frame(stopwords(kind = "es"))
+    colnames(stopped) <- c("word")
   }
   library(tidytext)
   library(stringr)
@@ -40,6 +46,7 @@ era_analysis = function(text, language, modeling) {
     unnest_tokens(word, text)
   
   word_counts <- by_word %>%
+    anti_join(stopped) %>%
     count(year, word, sort = TRUE)
   
   topic_dtm <- word_counts %>%
@@ -47,11 +54,8 @@ era_analysis = function(text, language, modeling) {
   
   
   library(topicmodels)
-  if(language == 'English'){
-    topic_lda <- LDA(topic_dtm, k = 7, control = list(seed = 1234))
-  }else{
-    topic_lda <- LDA(topic_dtm, k = 6, control = list(seed = 1234))
-  }  
+  topic_lda <- LDA(topic_dtm, k = 6, control = list(seed = 1234))
+  
   topic_lda_td <- tidy(topic_lda)
   
   topic1 = filter(topic_lda_td, topic == 1)
@@ -60,11 +64,6 @@ era_analysis = function(text, language, modeling) {
   topic4 = filter(topic_lda_td, topic == 4)
   topic5 = filter(topic_lda_td, topic == 5)
   topic6 = filter(topic_lda_td, topic == 6)
-  
-  if(language == "English"){
-    topic7 = filter(topic_lda_td, topic == 7)
-  }
-  
   
   text_df = data.frame(text = text)
   wordcount = text_df %>% unnest_tokens(word, text) %>%
@@ -76,9 +75,6 @@ era_analysis = function(text, language, modeling) {
   topic5scores = inner_join(topic2, wordcount, by = term)
   topic6scores = inner_join(topic2, wordcount, by = term)
   
-  if(language == "English"){
-    topic7scores = inner_join(topic7, wordcount)
-  }
   
   topic1score = 0
   for (i in 1:nrow(topic1scores)) {
@@ -106,12 +102,6 @@ era_analysis = function(text, language, modeling) {
     topic6score = topic6score + topic6scores$count * topic6scores$beta
   }
   
-  if(language == "English"){
-    topic7score = 0
-    for (i in 1:nrow(topic7scores)) {
-      topic7score = topic7score + topic7scores$count * topic7scores$beta
-    }
-  }
   
   topic_lda_gamma <- tidy(topic_lda, matrix = "gamma")
   book_topics <- topic_lda_gamma %>%
