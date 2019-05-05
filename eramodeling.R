@@ -9,6 +9,8 @@ era_analysis = function(text, language, modeling) {
     English_1901$year = rep("1901", nrow(English_1901))
     English_1914$year = rep("1901", nrow(English_1914))
     work = rbind(English_1066, English_1500, English_1660, English_1785, English_1832, English_1901, English_1914)
+    stopped = as.data.frame(stopwords(kind = "en"))
+    colnames(stopped) <- c("word")
   }
   
   if(language == "Italian"){
@@ -20,6 +22,8 @@ era_analysis = function(text, language, modeling) {
     Italian_1815$year = rep("1815", nrow(Italian_1815))
     Italian_1915$year = rep("1915", nrow(Italian_1915))
     work = rbind(Italian_1200,Italian_1400,Italian_1550,Italian_1700,Italian_1815,Italian_1915)
+    stopped = as.data.frame(stopwords(kind = "it"))
+    colnames(stopped) <- c("word")
   }
   
   if(language == "Spanish"){
@@ -31,6 +35,8 @@ era_analysis = function(text, language, modeling) {
     Spanish_1850$year = rep("1850", nrow(Spanish_1850))
     Spanish_1900$year = rep("1900", nrow(Spanish_1900))
     work = rbind(Spanish_1400,Spanish_1600,Spanish_1700,Spanish_1800,Spanish_1850,Spanish_1900)
+    stopped = as.data.frame(stopwords(kind = "es"))
+    colnames(stopped) <- c("word")
   }
   library(tidytext)
   library(stringr)
@@ -40,6 +46,7 @@ era_analysis = function(text, language, modeling) {
     unnest_tokens(word, text)
   
   word_counts <- by_word %>%
+    anti_join(stopped) %>%
     count(year, word, sort = TRUE)
   
   topic_dtm <- word_counts %>%
