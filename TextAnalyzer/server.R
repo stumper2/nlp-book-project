@@ -21,8 +21,21 @@ shinyServer(function(input, output) {
     if (is.null(inFile)) {
       "Unable to Read File"
     } else {
-        (readtext(inFile$datapath)$text)
-      # ngram_evaluator_laplace(inFile, input$Model, input$number)
+      (readtext(inFile$datapath)$text)
     }
+  })
+  #Laplace Graph
+  output$Lap_plot = renderPlot({
+
+    inFile = input$selection
+    #why wont it take the data path?!?!?!
+    langauge_viz((inFile)$datapath, input$number)
+  })
+  #Good Turings Graph
+  output$gt_plot = renderPlot({
+    
+    inFile = input$selection
+    langauge_viz(inFile$datapath, input$number)
+
   })
 })

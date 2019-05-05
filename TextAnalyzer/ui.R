@@ -5,7 +5,7 @@ library(shinythemes)
 shinyUI(
   fluidPage(# Application title
   theme = shinytheme("flatly"),
-  titlePanel("Story Analysis and Modeling"),
+  titlePanel("Text Analysis and Modeling"),
   navbarPage(
     "Text Modeling",
     tabPanel("Analysis",
@@ -18,13 +18,6 @@ shinyUI(
                    multiple = FALSE,
                    accept = c(".txt")
                  ),
-                 # #Just in case the user doesn't have a text file of a story, they can look one up
-                 # "or",
-                 # textInput(
-                 #   "GutenbergID",
-                 #  a("Type in a Gutenberg ID", href = "http://www.gutenberg.org/"),
-                 #   value = ""
-                 # ),
                  selectInput(
                    "number",
                    "Choose a language model:",
@@ -32,12 +25,11 @@ shinyUI(
                                "Word Trigram",
                                "Word Quadgram")
                  ),
-                 selectInput(
-                   "Model",
-                   "Choose a smoothing method:",
-                   choices = c("Laplace Smoothing", 
-                               "Good Turing's Smoothing")
-                 ),
+                 # selectInput(
+                 #   "Model",
+                 #   "Choose a smoothing method:",
+                 #   choices = c("Laplace Smoothing", 
+                 #               "Good Turing's Smoothing")
                  hr(),
                  actionButton("update", "Change")
                ),
@@ -48,6 +40,9 @@ shinyUI(
                          "Era Probability Bar Plot"#, plotOutput("")
                )
              )),
-    tabPanel("Visualization")
+    
+    tabPanel("Language", plotOutput("Lap_plot"), plotOutput("gt_plot")),
+    tabPanel("Era"),
+    tabPanel("Sentiment")
   )
 ))
