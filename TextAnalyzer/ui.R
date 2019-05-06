@@ -37,29 +37,25 @@ shinyUI(fluidPage(
       )
     ),
     tabPanel("Era"),
-    tabPanel("Sentiment", sidebarLayout(
-      #Side bar for data inputs
-      sidebarPanel(
-        fileInput(
-          "selection",
-          "Choose a Text File to Analyze",
-          multiple = FALSE,
-          accept = c(".txt")
-        ),
+    tabPanel("Sentiment", 
+      sidebarLayout(
+      # Side bar for data inputs
+        sidebarPanel(
         selectInput(
-          "number",
-          "Choose a language model:",
-          choices = c("Word Bigram",
-                      "Word Trigram",
-                      "Word Quadgram")
+          "sentiment",
+          "Choose a Sentiment Analysis:",
+          choices = c("positivity",
+                      "emotion")
         ),
         hr(),
-        actionButton("update", "Update")
+        actionButton("SentUpdate", "Update")
       ),
       
       mainPanel(
              plotOutput("phonePlot"), 
-             plotOutput("plot")))
+             plotOutput("plot")
+             )
       )
+  )
   )
 ))

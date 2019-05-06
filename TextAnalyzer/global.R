@@ -6,7 +6,21 @@ library(ggplot2)
 library(tidytext)
 library(readtext)
 
+library(syuzhet)
 library(purrrlyr)
+
+##Model Variables
+en_bigram = readRDS("../data/en_bigram.rds")
+it_bigram = readRDS("../data/it_bigram.rds")
+es_bigram = readRDS("../data/es_bigram.rds")
+en_trigram = readRDS("../data/en_trigram.rds")
+it_trigram = readRDS("../data/it_trigram.rds")
+es_trigram = readRDS("../data/es_trigram.rds")
+en_qgram = readRDS("../data/en_qgram.rds")
+it_qgram = readRDS("../data/it_qgram.rds")
+es_qgram = readRDS("../data/es_qgram.rds")
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Language Analysis Section ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # find a better way to tokenize, exclude number?
 # Code derived from www.tidytextmining.com/ngrams.html
@@ -123,18 +137,8 @@ ngram_prob = function(filename, model, func, number = 2) {
   func(test_ngram, model, number)
 }
 
-##Model Variables
-en_bigram = readRDS("../data/en_bigram.rds")
-it_bigram = readRDS("../data/it_bigram.rds")
-es_bigram = readRDS("../data/es_bigram.rds")
-en_trigram = readRDS("../data/en_trigram.rds")
-it_trigram = readRDS("../data/it_trigram.rds")
-es_trigram = readRDS("../data/es_trigram.rds")
-en_qgram = readRDS("../data/en_qgram.rds")
-it_qgram = readRDS("../data/it_qgram.rds")
-es_qgram = readRDS("../data/es_qgram.rds")
-
-langauge_viz = function(filename, ngram, methodNumber) {
+#Language Vizualization
+language_df = function(filename, ngram, methodNumber) {
 
   print("loaded in the file...")
 
@@ -166,29 +170,45 @@ langauge_viz = function(filename, ngram, methodNumber) {
     gt_spanish_prob = ngram_prob(filename, es_qgram, ngram_evaluator_gt, number = 4)
   }
   print("made all the probs!")
-  lap_df = data_frame("Prob" = c(lap_english_prob, lap_italian_prob, lap_spanish_prob), "Language" = c("English", "Italian", "Spanish"))
-  gt_df = data_frame("Prob" = c(gt_english_prob, gt_italian_prob, gt_spanish_prob), "Language" = c("English", "Italian", "Spanish"))
-  
   if (methodNumber == 1) {
-  print("making laplace graph!")
-  lap_graph = lap_df %>%
-    mutate(Minimum = ifelse(min(-Prob) == -Prob, T, F)) %>%
-      ggplot() +
-      aes(x = Language, y =-Prob, fill = Minimum) +
-      labs(title = "Language projection using laplace smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
-      geom_col() + 
-      scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
-  return(lap_graph)
+    lap_df = data_frame("Prob" = c(lap_english_prob, lap_italian_prob, lap_spanish_prob), 
+                        "Language" = c("English", "Italian", "Spanish"),
+                        "Minimum" = ifelse(min(-Prob) == -Prob, T, F))
+    return(lap_df)
   }
   if (methodNumber == 2) {
-  print("making gt graph!")
-  gt_graph = gt_df %>%
-    mutate(Minimum = ifelse(min(-Prob) == -Prob, T, F)) %>%
-      ggplot() +
-      aes(x = Language, y = -Prob, fill = Minimum) +
-      labs(title = "Language projection using Good Turings smoothing", subtitle = "Where the smallest ln(probability) is the least likely", y = "ln(Probability)") +
-      geom_col() + 
-      scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
-  return(gt_graph)
+    gt_df = data_frame("Prob" = c(gt_english_prob, gt_italian_prob, gt_spanish_prob), 
+                       "Language" = c("English", "Italian", "Spanish"),
+                       "Minimum" = ifelse(min(-Prob) == -Prob, T, F))
+    return(gt_df)
   }
 }
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Sentiment Section ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Sentiment Modeling
+#type = positivity or emotion
+sent_modeling = function(filename, language_name, type = "positivity") {
+  testfile = readtext(filename)
+  test_sent = testfile %>% 
+    unnest_tokens(output = word, input = text, token = "words")
+  if (type == "emotion") {
+    table = get_sentiment_dictionary("nrc", language_name) %>% 
+      filter(sentiment != "positive" & sentiment != "negative")
+  } else {
+    table = get_sentiment_dictionary("nrc", language_name) %>% 
+      filter(sentiment == "positive" | sentiment == "negative")
+  }
+  
+  sent_analysis(test_sent, table)
+}
+
+# bag of words approach
+sent_analysis = function(test_sent, model) {
+  assigned_v = test_sent %>%
+    count(word, sort = TRUE) %>%
+    inner_join(model)
+  
+  return (assigned_v)
+}
+
+#sentiment Visilization
