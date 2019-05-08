@@ -9,7 +9,7 @@ shinyUI(fluidPage(
   navbarPage(
     "Text Modeling",
     tabPanel("Language", sidebarLayout(
-      # Sidebar with a slider and selection inputs
+      #Side bar for data inputs
       sidebarPanel(
         fileInput(
           "selection",
@@ -25,61 +25,37 @@ shinyUI(fluidPage(
                       "Word Quadgram")
         ),
         hr(),
-        actionButton("update", "Change")
+        actionButton("update", "Update")
       ),
       
-      mainPanel("Language Probability Bar Plot",
-                #plotOuput(),
+      mainPanel(#"Language Probability Bar Plot",
+                #plotOuput(), 
                 # textOutput("contents"),
-                plotOutput("Lap_plot")
-                # ,plotOutput("gt_plot"))
-      ))),
-      tabPanel("Era", sidebarLayout(
-        # Sidebar with a slider and selection inputs
+                plotOutput("lap_plot"),
+                plotOutput("gt_plot")
+                )
+      )
+    ),
+    tabPanel("Era"),
+    tabPanel("Sentiment", 
+      sidebarLayout(
+      # Side bar for data inputs
         sidebarPanel(
-          fileInput(
-            "selection",
-            "Choose a Text File to Analyze",
-            multiple = FALSE,
-            accept = c(".txt")
-          ),
-          selectInput(
-            "language",
-            "Choose a language:",
-            choices = c("English",
-                        "Spanish",
-                        "Italian")
-          ),
-          hr(),
-          actionButton("update", "Change")
+        selectInput(
+          "sentiment",
+          "Choose a Sentiment Analysis:",
+          choices = c("positivity",
+                      "emotion")
         ),
-        
-        mainPanel("Era Probability Bar Plot") #,
-        # plotOutput("Lap_plot")
-      )),
-      tabPanel("Sentiment", sidebarLayout(
-        # Sidebar with a slider and selection inputs
-        sidebarPanel(
-          fileInput(
-            "selection",
-            "Choose a Text File to Analyze",
-            multiple = FALSE,
-            accept = c(".txt")
-          ),
-          selectInput(
-            "language",
-            "Choose a language:",
-            choices = c("English",
-                        "Spanish",
-                        "Italian")
-          ),
-          hr(),
-          actionButton("update", "Change")
-        ),
-        
-        mainPanel(
-          "Era Probability Bar Plot",
-          plotOutput("phonePlot"),
-          plotOutput("plot")
-        )))
-  )))
+        hr(),
+        actionButton("SentUpdate", "Update")
+      ),
+      
+      mainPanel(
+             plotOutput("phonePlot"), 
+             plotOutput("plot")
+             )
+      )
+  )
+  )
+))
