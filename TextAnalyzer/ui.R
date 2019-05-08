@@ -28,34 +28,53 @@ shinyUI(fluidPage(
         actionButton("update", "Update")
       ),
       
-      mainPanel(#"Language Probability Bar Plot",
-                #plotOuput(), 
-                # textOutput("contents"),
-                plotOutput("lap_plot"),
-                plotOutput("gt_plot")
+      mainPanel(# textOutput("contents"),
+                fluidRow(column(width = 6, plotOutput("lap_plot")), column(width = 6, plotOutput("gt_plot"))),
+                fluidRow(column(width = 12, "Both graphs above are projections of probabilities of given languages. Given our limited resources and time, we are estimating whether the text will be English, Italian, or Spanish. The smoothing methods available are Laplace smoothing and Good Turings, but due to the probabilities ≈0, we leave the results in a natural log form. The most probable language is highlighted above in red."))
                 )
       )
     ),
-    tabPanel("Era"),
-    tabPanel("Sentiment", 
-      sidebarLayout(
-      # Side bar for data inputs
-        sidebarPanel(
-        selectInput(
-          "sentiment",
-          "Choose a Sentiment Analysis:",
-          choices = c("positivity",
-                      "emotion")
-        ),
-        hr(),
-        actionButton("SentUpdate", "Update")
-      ),
-      
-      mainPanel(
-             plotOutput("phonePlot"), 
-             plotOutput("plot")
+    
+    tabPanel("Era", 
+             sidebarPanel(
+               selectInput(
+                 "EraLanguage",
+                 "Choose a language:",
+                 choices = c("English",
+                             "Spanish",
+                             "Italian")
+               ),
+               hr(),
+               actionButton("update", "Change")
+             ),
+             mainPanel(
+               plotOutput("era_plot")
              )
+    ),
+  
+  tabPanel("Sentiment", sidebarLayout(
+    # Sidebar with a slider and selection inputs
+    sidebarPanel(
+      selectInput(
+        "SentLanguage",
+        "Choose a language:",
+        choices = c("English",
+                    "Spanish",
+                    "Italian")
+      ),
+      selectInput(
+        "sentiment",
+        "Choose a Sentiment Analysis:",
+        choices = c("positivity",
+                    "emotion")
+      ),
+      hr(),
+      actionButton("update", "Change")
+    ),
+      mainPanel(
+        fluidRow(column(width = 6, plotOutput("phonePlot")), column(width = 6,  plotOutput("plot"))),
+        fluidRow(column(width = 12, "This tab analyzes the connotation of the text, specifically the connotation of each word. By tokenizing the document and comparing it to a sentiment dictionary, we are able to categorize words based on emotion, and more generally whether they are positive or negative. On the left is a graph representing the frequencies where as the right is a Word cloud categorizing the most frequent words by their connotations."))
       )
-  )
-  )
+  ))
 ))
+)
