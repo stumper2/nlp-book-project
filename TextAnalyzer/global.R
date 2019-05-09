@@ -26,6 +26,9 @@ English = readRDS("../data/english.rds")
 Spanish = readRDS("../data/spanish.rds")
 Italian = readRDS("../data/italian.rds")
 
+`%then%` <- shiny:::`%OR%`  
+
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Language Analysis Section ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -227,6 +230,7 @@ sent_analysis = function(test_sent, model) {
 
 
 era_analysis = function(text, language) {
+  print("Working on era")
   if(language == "English"){
     work = English
     stopped = as.data.frame(stopwords(kind = "en"))
