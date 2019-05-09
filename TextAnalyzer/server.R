@@ -57,42 +57,13 @@ shinyServer(function(input, output) {
       scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
   })
   
-  #caching hte top lang
-  # lang = reactive({
-  #   input$update
-  #   inFile = isolate(input$selection)
-  #     lang_df = language_df((inFile)$datapath, isolate(input$number), 2)
-  #     lang_df$Language[max(lang_df$Prob) == lang_df$Prob]
-  # })
-  
-  terms = eventReactive(input$Sentupdate, {
-    # Change when the "update" button is pressed...
-    # ...but not for anything else
-    isolate({
-      withProgress({
-        setProgress(message = "Sentiment analysis...")
-      })
-    })
-  })
-  #chacheing the model so that we can use in both tgraphs
-  # word_sents = reactive({
-  #   input$update
-  #     inFile = isolate(input$selection)
-  #     print("Calculating most probably language...")
-  #     top_lang = lang()
-  #  
-  #   input$SentUpdate
-  #   print("creating sentiment model using most probably language")
-  #     sent_modeling(inFile$datapath, tolower(top_lang) , isolate(input$sentiment))
-  # })
-  # 
-  
+
   #Word clouds!
   output$phonePlot <- renderPlot({
 
     validate (
-      is_there_data((input$selection)$datapath) %then%
-        need(input$update, "Press the update Button!")
+      is_there_data((input$selection3)$datapath) %then%
+        need(input$update3, "Press the update Button!")
     )
     
     input$update3
@@ -117,8 +88,8 @@ shinyServer(function(input, output) {
   #Word clouds!
   output$plot <- renderPlot({
     validate (
-      is_there_data((input$selection)$datapath) %then%
-        need(input$update, "Press the update Button!")
+      is_there_data((input$selection3)$datapath) %then%
+        need(input$update3, "Press the update Button!")
     )
 
     input$update3
@@ -137,7 +108,7 @@ shinyServer(function(input, output) {
     input$update2
   
     validate (
-      is_there_data((input$selection)$datapath) %then%
+      is_there_data((input$selection2)$datapath) %then%
         need(input$update, "Press the update Button!")
     )
     inFile = isolate(input$selection2)

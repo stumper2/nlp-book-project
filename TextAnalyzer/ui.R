@@ -10,7 +10,7 @@ shinyUI(fluidPage(
     "Text Modeling",
     tabPanel("Language", sidebarLayout(
       #Side bar for data inputs
-      sidebarPanel(width = 3,
+      sidebarPanel(
         fileInput(
           "selection",
           "Choose a Text File to Analyze",
@@ -36,7 +36,6 @@ shinyUI(fluidPage(
     ),
     
     tabPanel("Era", 
-             sidebarPanel(width = 3,
              sidebarPanel(
                fileInput(
                  "selection2",
@@ -58,12 +57,10 @@ shinyUI(fluidPage(
                plotOutput("era_plot"),
                "This is a test to see some text"
              )
+    
     ),
-  
   tabPanel("Sentiment", sidebarLayout(
     # Sidebar with a slider and selection inputs
-    sidebarPanel(width = 3,
-
     sidebarPanel(
       fileInput(
         "selection3",
@@ -92,6 +89,5 @@ shinyUI(fluidPage(
         fluidRow(column(width = 12, "This tab analyzes the connotation of the text, specifically the connotation of each word. By tokenizing the document and comparing it to a sentiment dictionary, we are able to categorize words based on emotion, and more generally whether they are positive or negative. On the left is a graph representing the frequencies where as the right is a Word cloud categorizing the most frequent words by their connotations."))
       )
   ))
-))
 ))
 )
