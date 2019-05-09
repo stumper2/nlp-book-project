@@ -32,7 +32,8 @@ shinyUI(fluidPage(
       mainPanel(# textOutput("contents"),
                 fluidRow(column(width = 6, withSpinner(plotOutput("lap_plot")), color = "blue"), column(width = 6, withSpinner(plotOutput("gt_plot"), color = "orange"))),
                 hr(),
-                fluidRow(column(width = 12, "Both graphs above are projections of probabilities of given languages. Given our limited resources and time, we are estimating whether the text will be English, Italian, or Spanish. The smoothing methods available are Laplace smoothing and Good Turings, but due to the probabilities ≈0, we leave the results in a natural log form. The most probable language is highlighted above in red."))
+                fluidRow(column(width = 12, "This section will analyze the text to determine the most prevalent language given 2 different smoothing methods - Laplace smoothing and Good Turing’s smoothing. The possible languages are English, Spanish, and Italian. Due to the results of the smoothing being ≈0, the graphs are the ln(probability) with the smallest graph being the most likely. This will be highlighted in red.")),
+                hr()
                 )
       )
     ),
@@ -91,7 +92,7 @@ shinyUI(fluidPage(
       actionButton("update3", "Update")
     ),
       mainPanel(
-        fluidRow(column(width = 12, "This tab analyzes the connotation of the text, specifically the connotation of each word. By tokenizing the document and comparing it to a sentiment dictionary, we are able to categorize words based on emotion, and more generally whether they are positive or negative. On the left is a graph representing the frequencies where as the right is a Word cloud categorizing the most frequent words by their connotations.")),
+        fluidRow(column(width = 12, "This tab analyzes the connotation of the text, specifically the connotation of each word. By tokenizing the document and comparing it to a sentiment dictionary, we are able to categorize words based on emotion, and more generally whether they are positive or negative. The first is a graph of the word frequencies sorted by sentiment where as the second is a Word cloud categorizing the most frequent words by their connotations.")),
         hr(),
         withSpinner(plotOutput("phonePlot"), type = 3, color = "orange", color.background = "white"),
         withSpinner(plotOutput("plot"), type = 3, color = "blue", color.background = "white")
