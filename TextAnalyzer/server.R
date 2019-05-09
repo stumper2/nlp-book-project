@@ -14,20 +14,26 @@ shinyServer(function(input, output) {
     })
   })
   
-  # testing for readble file
-  output$contents = renderText ({
-    inFile = input$selection
-
-    if (is.null(inFile)) {
-      "Unable to Read File"
-    } 
-  })
+  # # testing for readble file
+  # output$contents = renderText ({
+  #   inFile = input$selection
+  # 
+  #   if (is.null(inFile)) {
+  #     "Unable to Read File"
+  #   } 
+  # })
+  
+  
   
   #Laplace Graph
   output$lap_plot = renderPlot({
     
-    input$update
+    validate (
+      is_there_data((input$selection)$datapath) %then%
+      need(input$update, "Press the update Button!")
+    )
     
+    input$update
     inFile = isolate(input$selection)
     
     lap_df = language_df((inFile)$datapath, isolate(input$number), 1) 
@@ -44,9 +50,13 @@ shinyServer(function(input, output) {
   
   # Good Turings Graph
   output$gt_plot = renderPlot({
+    
+    validate (
+      is_there_data((input$selection)$datapath) %then%
+        need(input$update, "Press the update Button!")
+    )
 
     input$update
-    
     inFile = isolate(input$selection)
     
     gt_df = language_df((inFile)$datapath, isolate(input$number), 2)   
@@ -70,15 +80,15 @@ shinyServer(function(input, output) {
   #     lang_df$Language[max(lang_df$Prob) == lang_df$Prob]
   # })
   
-  # terms = eventReactive(input$Sentupdate, {
-  #   # Change when the "update" button is pressed...
-  #   # ...but not for anything else
-  #   isolate({
-  #     withProgress({
-  #       setProgress(message = "Sentiment analysis...")
-  #     })
-  #   })
-  # })
+  terms = eventReactive(input$Sentupdate, {
+    # Change when the "update" button is pressed...
+    # ...but not for anything else
+    isolate({
+      withProgress({
+        setProgress(message = "Sentiment analysis...")
+      })
+    })
+  })
   #chacheing the model so that we can use in both tgraphs
   # word_sents = reactive({
   #   input$update
@@ -93,15 +103,21 @@ shinyServer(function(input, output) {
   # 
   #Word clouds!
   output$phonePlot <- renderPlot({
-    
     input$update
-    # input$SentUpdate
+    
+    validate (
+      is_there_data((input$selection)$datapath) %then%
+        need(input$update, "Press the update Button!")
+    )
+    
     inFile = isolate(input$selection)
     
-    it = sent_modeling(inFile$datapath, tolower(input$SentLanguage), (input$sentiment))
+    input$SentUpdate
+    it = sent_modeling(inFile$datapath, tolower(input$SentLanguage), tolower(input$sentiment))
     gr = ggplot(it) +
       aes(x = sentiment, fill = sentiment) +
       labs(x = "Sentiment", y = "Frequency") + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       geom_bar() # + title and color and stuff
     
     if (isolate(input$sentiment) == "emotion") {
@@ -115,17 +131,22 @@ shinyServer(function(input, output) {
   
   #Word clouds!
   output$plot <- renderPlot({
+    validate (
+      is_there_data((input$selection)$datapath) %then%
+        need(input$update, "Press the update Button!")
+    )
+    
     input$update
     inFile = isolate(input$selection)
     
-    # input$Sentupdate
+    input$Sentupdate
     
-    it = sent_modeling(inFile$datapath, tolower(input$SentLanguage), (input$sentiment))
+    it = sent_modeling(inFile$datapath, tolower(input$SentLanguage), tolower(input$sentiment))
     
     ggplot(it) + 
       aes(label = word, size = n, color = sentiment) +
       scale_size_area(max_size = 24) + 
-      geom_text_wordcloud(area_corr = TRUE ,rm_outside = TRUE) +   
+      geom_text_wordcloud(rm_outside = TRUE) +   
       theme_minimal() 
   })
   
@@ -133,9 +154,19 @@ shinyServer(function(input, output) {
   
   output$era_plot = renderPlot({
     input$update
+    validate (
+      is_there_data((input$selection)$datapath) %then%
+        need(input$update, "Press the update Button!")
+    )
     
     inFile = isolate(input$selection)
-    era_analysis(inFile$text, isolate(input$EraLanguage))
+    scores = era_analysis(inFile$datapath, isolate(input$EraLanguage))
+    
+    scores %>%
+      ggplot() +
+      aes(x = document, y = format(round(as.numeric(score),2), nsmall = 2), fill = topic) +
+      labs(x = "Era's", y = "Topic Scoring", title = "Topic Modeling based on Language specific Era") +
+      geom_col() 
   })
 
 })

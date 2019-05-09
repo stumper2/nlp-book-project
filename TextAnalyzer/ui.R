@@ -10,7 +10,7 @@ shinyUI(fluidPage(
     "Text Modeling",
     tabPanel("Language", sidebarLayout(
       #Side bar for data inputs
-      sidebarPanel(
+      sidebarPanel(width = 3,
         fileInput(
           "selection",
           "Choose a Text File to Analyze",
@@ -36,7 +36,7 @@ shinyUI(fluidPage(
     ),
     
     tabPanel("Era", 
-             sidebarPanel(
+             sidebarPanel(width = 3,
                selectInput(
                  "EraLanguage",
                  "Choose a language:",
@@ -48,13 +48,14 @@ shinyUI(fluidPage(
                actionButton("update", "Change")
              ),
              mainPanel(
-               plotOutput("era_plot")
+               plotOutput("era_plot"),
+               "This is a test to see some text"
              )
     ),
   
   tabPanel("Sentiment", sidebarLayout(
     # Sidebar with a slider and selection inputs
-    sidebarPanel(
+    sidebarPanel(width = 3,
       selectInput(
         "SentLanguage",
         "Choose a language:",
@@ -65,8 +66,8 @@ shinyUI(fluidPage(
       selectInput(
         "sentiment",
         "Choose a Sentiment Analysis:",
-        choices = c("positivity",
-                    "emotion")
+        choices = c("Positivity",
+                    "Emotion")
       ),
       hr(),
       actionButton("update", "Change")

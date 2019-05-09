@@ -254,10 +254,10 @@ era_analysis = function(text, language) {
   
   word_counts <- by_word %>%
     anti_join(stopped) %>%
-    count(year, word, sort = TRUE)
+    count(era, word, sort = TRUE)
   
   topic_dtm <- word_counts %>%
-    cast_dtm(year, word, n)
+    cast_dtm(era, word, n)
   
   set.seed(4142)
   library(topicmodels)
@@ -329,68 +329,68 @@ era_analysis = function(text, language) {
     book_topics[1,2] = "6"
   }
   finalscores = inner_join(scores, book_topics)
+  # for (i in nrow(finalscores)) {
+  #   if(language == "Italian"){
+  #     if(finalscores$document[i] == "1550"){
+  #       finalscores$document[i] = "Baroque Period (1550-1700)"
+  #     }
+  #     if(finalscores$document[i] == "1915"){
+  #       finalscores$document[i] = "Contemporary Period (1915-Present)"
+  #     }
+  #     if(finalscores$document[i] == "1815"){
+  #       finalscores$document[i] = "Romanticism and Realism Period (1815-1915)"
+  #     }
+  #     if(finalscores$document[i] == "1200"){
+  #       finalscores$document[i] = "Medieval Period (1200-1400)"
+  #     }
+  #     if(finalscores$document[i] == "1700"){
+  #       finalscores$document[i] = "Classicism Period (1700-1815)"
+  #     }
+  #     if(finalscores$document[i] == "1400"){
+  #       finalscores$document[i] = "Renaissance Period (1400-1550)"
+  #     }
+  #     
+  #   }
+  #   if(language == "English"){
+  #     if(finalscores$document[i] == "1066"){
+  #       finalscores$document[i] = "Middle English Period (1066-1500)"
+  #     }
+  #     if(finalscores$document[i] == "1500"){
+  #       finalscores$document[i] = "The Renaissance (1500-1600)"
+  #     }
+  #     if(finalscores$document[i] == "1832"){
+  #       finalscores$document[i] = "The Victorian Period (1832-1901)"
+  #     }
+  #     if(finalscores$document[i] == "1660"){
+  #       finalscores$document[i] = "The Neoclassical Period (1600-1785)"
+  #     }
+  #     if(finalscores$document[i] == "1901"){
+  #       finalscores$document[i] = "The Modern Period (1901-Present)"
+  #     }
+  #     if(finalscores$document[i] == "1785"){
+  #       finalscores$document[i] = "The Romantic Period (1785-1832)"
+  #     }
+  #   }
+  #   if(language == "Spanish"){
+  #     if(finalscores$document[i] == "1900"){
+  #       finalscores$document[i] = "Modernism (1900-Present)"
+  #     }
+  #     if(finalscores$document[i] == "1850"){
+  #       finalscores$document[i] = "Realism (1850-1900)"
+  #     }
+  #     if(finalscores$document[i] == "1400"){
+  #       finalscores$document[i] = "Renaissance (1400-1600)"
+  #     }
+  #     if(finalscores$document[i] == "1600"){
+  #       finalscores$document[i] = "Baroque (1600-1700)"
+  #     }
+  #     if(finalscores$document[i] == "1700"){
+  #       finalscores$document[i] = "Enlightenment (1700-1800)"
+  #     }
+  #     if(finalscores$document[i] == "1800"){
+  #       finalscores$document[i] = "Romanticism (1800-1850)"
+  #     }
+  #   }
+  # }
   return(finalscores)
-  for (i in nrow(finalscores)) {
-    if(language == "Italian"){
-      if(finalscores$document[i] == "1550"){
-        finalscores$document[i] = "Baroque Period (1550-1700)"
-      }
-      if(finalscores$document[i] == "1915"){
-        finalscores$document[i] = "Contemporary Period (1915-Present)"
-      }
-      if(finalscores$document[i] == "1815"){
-        finalscores$document[i] = "Romanticism and Realism Period (1815-1915)"
-      }
-      if(finalscores$document[i] == "1200"){
-        finalscores$document[i] = "Medieval Period (1200-1400)"
-      }
-      if(finalscores$document[i] == "1700"){
-        finalscores$document[i] = "Classicism Period (1700-1815)"
-      }
-      if(finalscores$document[i] == "1400"){
-        finalscores$document[i] = "Renaissance Period (1400-1550)"
-      }
-      
-    }
-    if(language == "English"){
-      if(finalscores$document[i] == "1066"){
-        finalscores$document[i] = "Middle English Period (1066-1500)"
-      }
-      if(finalscores$document[i] == "1500"){
-        finalscores$document[i] = "The Renaissance (1500-1600)"
-      }
-      if(finalscores$document[i] == "1832"){
-        finalscores$document[i] = "The Victorian Period (1832-1901)"
-      }
-      if(finalscores$document[i] == "1660"){
-        finalscores$document[i] = "The Neoclassical Period (1600-1785)"
-      }
-      if(finalscores$document[i] == "1901"){
-        finalscores$document[i] = "The Modern Period (1901-Present)"
-      }
-      if(finalscores$document[i] == "1785"){
-        finalscores$document[i] = "The Romantic Period (1785-1832)"
-      }
-    }
-    if(language == "Spanish"){
-      if(finalscores$document[i] == "1900"){
-        finalscores$document[i] = "Modernism (1900-Present)"
-      }
-      if(finalscores$document[i] == "1850"){
-        finalscores$document[i] = "Realism (1850-1900)"
-      }
-      if(finalscores$document[i] == "1400"){
-        finalscores$document[i] = "Renaissance (1400-1600)"
-      }
-      if(finalscores$document[i] == "1600"){
-        finalscores$document[i] = "Baroque (1600-1700)"
-      }
-      if(finalscores$document[i] == "1700"){
-        finalscores$document[i] = "Enlightenment (1700-1800)"
-      }
-      if(finalscores$document[i] == "1800"){
-        finalscores$document[i] = "Romanticism (1800-1850)"
-      }
-    }
-  }
 }
