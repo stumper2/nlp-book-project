@@ -3,26 +3,50 @@ library(shiny)
 library(readtext)
 
 shinyServer(function(input, output) {
-  
-  # testing for readble file
-  output$contents = renderText ({
-    inFile = input$selection
-
-    if (is.null(inFile)) {
-      "Unable to Read File"
-    } 
+  file1 <- reactive({
+    # Change when the "update" button is pressed...
+    input$update
+    # ...but not for anything else
+    isolate({
+      withProgress({
+        setProgress(message = "Loading file...")
+        input$selection
+      })
+    })
   })
-
+  
+  file2 <- reactive({
+    # Change when the "update" button is pressed...
+    input$update
+    # ...but not for anything else
+    isolate({
+      withProgress({
+        setProgress(message = "Loading file...")
+        input$selection2
+      })
+    })
+  })
+  
+  file3 <- reactive({
+    # Change when the "update" button is pressed...
+    input$update
+    # ...but not for anything else
+    isolate({
+      withProgress({
+        setProgress(message = "Loading file...")
+        input$selection3
+      })
+    })
+  })
+  
   #Laplace Graph
   output$lap_plot = renderPlot({
-    
     validate (
       is_there_data((input$selection)$datapath) %then%
-      need(input$update, "Press the update Button!")
+        need(input$update, "Press the update Button!")
     )
     
-    input$update
-    inFile = isolate(input$selection)
+    inFile = file1()
     
     lap_df = language_df((inFile)$datapath, isolate(input$number), 1) 
     
@@ -32,21 +56,16 @@ shinyServer(function(input, output) {
       labs(title = "Language projection using laplace smoothing", subtitle = "Where the smallest ln(probability) is the most likely", y = "ln(Probability)") +
       geom_col() + 
       scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
-    
-   
   })
   
-
   # Good Turings Graph
   output$gt_plot = renderPlot({
-    
     validate (
       is_there_data((input$selection)$datapath) %then%
         need(input$update, "Press the update Button!")
     )
-
-    input$update
-    inFile = isolate(input$selection)
+    
+    inFile = file1()
     
     gt_df = language_df((inFile)$datapath, isolate(input$number), 2)   
     
@@ -58,20 +77,32 @@ shinyServer(function(input, output) {
       scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
   })
   
-
+  output$era_plot = renderPlot({
+    validate (
+      is_there_data((input$selection2)$datapath) %then%
+        need(input$update2, "Press the update Button!")
+    )
+    
+    inFile = file2()
+    
+    scores = era_analysis(inFile$text, isolate(input$EraLanguage))
+    
+    scores %>%
+      ggplot() +
+      aes(x = document, y = format(round(as.numeric(score),2), nsmall = 2), fill = topic) +
+      labs(x = "Era's", y = "Topic Scoring", title = "Topic Modeling based on Language specific Era") +
+      geom_col()
+  })
+  
   #Word clouds!
   output$phonePlot <- renderPlot({
-
     validate (
       is_there_data((input$selection3)$datapath) %then%
         need(input$update3, "Press the update Button!")
     )
     
-    input$update3
+    inFile = file3()
     
-    inFile = isolate(input$selection3)
-
-    input$SentUpdate
     it = sent_modeling(inFile$datapath, tolower(input$SentLanguage), tolower(input$sentiment))
     gr = ggplot(it) +
       aes(x = sentiment, fill = sentiment) +
@@ -92,36 +123,19 @@ shinyServer(function(input, output) {
       is_there_data((input$selection3)$datapath) %then%
         need(input$update3, "Press the update Button!")
     )
-
-    input$update3
-    inFile = isolate(input$selection3)
-
-    it = sent_modeling(inFile$datapath, tolower(input$SentLanguage), tolower(input$sentiment))
+    
+    inFile = file3()
+    
+    it = withProgress({
+      setProgress(message = "Processing file...",
+      sent_modeling(inFile$datapath, tolower(input$SentLanguage), tolower(input$sentiment)))
+    })
     
     ggplot(it) + 
       aes(label = word, size = n, color = sentiment) +
       scale_size_area(max_size = 24) + 
       geom_text_wordcloud(rm_outside = TRUE) +   
       theme_minimal() 
-  })
-  
-  output$era_plot = renderPlot({
-    input$update2
-  
-    validate (
-      is_there_data((input$selection2)$datapath) %then%
-        need(input$update, "Press the update Button!")
-    )
-    inFile = isolate(input$selection2)
-    scores = era_analysis(inFile$text, isolate(input$EraLanguage))
-    
-    scores %>%
-      ggplot() +
-      aes(x = document, y = format(round(as.numeric(score),2), nsmall = 2), fill = topic) +
-      labs(x = "Era's", y = "Topic Scoring", title = "Topic Modeling based on Language specific Era") +
-      geom_col() 
-
-    
   })
 })
 
