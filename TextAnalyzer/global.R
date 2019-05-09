@@ -28,7 +28,13 @@ Italian = readRDS("../data/italian.rds")
 
 `%then%` <- shiny:::`%OR%`  
 
-
+is_there_data = function(input) {
+  if(is.null(input) || !str_detect(input, pattern = "txt")) {
+    "Please select a text file to analyze"
+  } else {
+    NULL
+  }
+}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Language Analysis Section ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

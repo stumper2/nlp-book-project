@@ -36,8 +36,7 @@ shinyServer(function(input, output) {
    
   })
   
-  %then% = shiny:::%OR%
-  
+
   # Good Turings Graph
   output$gt_plot = renderPlot({
     
