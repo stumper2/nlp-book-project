@@ -37,6 +37,12 @@ shinyUI(fluidPage(
     
     tabPanel("Era", 
              sidebarPanel(
+               fileInput(
+                 "selection2",
+                 "Choose a Text File to Analyze",
+                 multiple = FALSE,
+                 accept = c(".txt")
+               ),
                selectInput(
                  "EraLanguage",
                  "Choose a language:",
@@ -45,7 +51,7 @@ shinyUI(fluidPage(
                              "Italian")
                ),
                hr(),
-               actionButton("update", "Change")
+               actionButton("update2", "Update")
              ),
              mainPanel(
                plotOutput("era_plot")
@@ -55,6 +61,12 @@ shinyUI(fluidPage(
   tabPanel("Sentiment", sidebarLayout(
     # Sidebar with a slider and selection inputs
     sidebarPanel(
+      fileInput(
+        "selection3",
+        "Choose a Text File to Analyze",
+        multiple = FALSE,
+        accept = c(".txt")
+      ),
       selectInput(
         "SentLanguage",
         "Choose a language:",
@@ -69,7 +81,7 @@ shinyUI(fluidPage(
                     "emotion")
       ),
       hr(),
-      actionButton("update", "Change")
+      actionButton("update3", "Update")
     ),
       mainPanel(
         fluidRow(column(width = 6, plotOutput("phonePlot")), column(width = 6,  plotOutput("plot"))),
