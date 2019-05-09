@@ -92,10 +92,10 @@ shinyUI(fluidPage(
       actionButton("update3", "Update")
     ),
       mainPanel(
-        fluidRow(column(width = 12, "This tab analyzes the connotation of the text, specifically the connotation of each word. By tokenizing the document and comparing it to a sentiment dictionary, we are able to categorize words based on emotion, and more generally whether they are positive or negative. The first is a graph of the word frequencies sorted by sentiment where as the second is a Word cloud categorizing the most frequent words by their connotations.")),
-        hr(),
         withSpinner(plotOutput("phonePlot"), type = 3, color = "orange", color.background = "white"),
-        withSpinner(plotOutput("plot"), type = 3, color = "blue", color.background = "white")
+        withSpinner(plotOutput("plot"), type = 3, color = "blue", color.background = "white"),
+        hr(),
+        fluidRow(column(width = 12, "This tab analyzes the connotation of the text, specifically the connotation of each word. By tokenizing the document and comparing it to a sentiment dictionary, we are able to categorize words based on emotion, and more generally whether they are positive or negative. The first is a graph of the word frequencies sorted by sentiment where as the second is a Word cloud categorizing the most frequent words by their connotations."))
       )
   ))
 ))

@@ -17,7 +17,7 @@ shinyServer(function(input, output) {
   
   file2 <- reactive({
     # Change when the "update" button is pressed...
-    input$update
+    input$update2
     # ...but not for anything else
     isolate({
       withProgress({
@@ -27,14 +27,15 @@ shinyServer(function(input, output) {
     })
   })
   
-  file3 <- reactive({
+  sent_model <- reactive({
     # Change when the "update" button is pressed...
-    input$update
+    input$update3
     # ...but not for anything else
     isolate({
       withProgress({
         setProgress(message = "Loading file...")
-        input$selection3
+        fileThree = input$selection3
+        sent_modeling(fileThree$datapath, tolower(input$SentLanguage), tolower(input$sentiment))
       })
     })
   })
@@ -106,9 +107,8 @@ shinyServer(function(input, output) {
         need(input$update3, "Press the update Button!")
     )
     
-    inFile = file3()
+    it = sent_model()
     
-    it = sent_modeling(inFile$datapath, tolower(input$SentLanguage), tolower(input$sentiment))
     gr = ggplot(it) +
       aes(x = sentiment, fill = sentiment) +
       labs(x = "Sentiment", y = "Frequency") + 
@@ -129,12 +129,7 @@ shinyServer(function(input, output) {
         need(input$update3, "Press the update Button!")
     )
     
-    inFile = file3()
-    
-    it = withProgress({
-      setProgress(message = "Processing file...",
-      sent_modeling(inFile$datapath, tolower(input$SentLanguage), tolower(input$sentiment)))
-    })
+    it = sent_model()
     
     ggplot(it) + 
       aes(label = word, size = n, color = sentiment) +
