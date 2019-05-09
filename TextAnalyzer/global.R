@@ -1,3 +1,7 @@
+pkg_lis = c("plyr", "dplyr", "tidyr", "stringr", "ggplot2", "tidytext", "readtext", "syuzhet", "purrrlyr", "topicmodels", "ggwordcloud", "shinycssloaders", "shinycssloaders") 
+mia_pkgs = pkg_list[!(pkg_list %in% installed.packages()[,"Package"])]
+if(length(mia_pkgs) > 0) install.packages(mia_pkgs)
+loaded_pkgs = lapply(pkg_list, require, character.only=TRUE)
 library(plyr)
 library(dplyr)
 library(tidyr)
