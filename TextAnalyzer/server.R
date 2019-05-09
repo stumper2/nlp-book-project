@@ -110,16 +110,21 @@ shinyServer(function(input, output) {
   
     validate (
       is_there_data((input$selection2)$datapath) %then%
-        need(input$update, "Press the update Button!")
+        need(input$update2, "Press the update Button!")
     )
     inFile = isolate(input$selection2)
-    scores = era_analysis(inFile$text, isolate(input$EraLanguage))
+    scores = era_analysis(inFile$datapath, isolate(input$EraLanguage))
     
-    scores %>%
+    scores1 = scores %>%
+      mutate(Maximum = ifelse(max(as.numeric(score)) == as.numeric(score), T, F)) 
+    scores1$Maximum
+    scores1%>%
       ggplot() +
-      aes(x = document, y = format(round(as.numeric(score),2), nsmall = 2), fill = topic) +
+      aes(x = document, y = format(round(as.numeric(score),4), nsmall = 2), fill = Maximum) +
       labs(x = "Era's", y = "Topic Scoring", title = "Topic Modeling based on Language specific Era") +
-      geom_col() 
+      geom_col() +
+      scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
+    
 
     
   })

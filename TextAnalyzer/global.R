@@ -268,13 +268,13 @@ era_analysis = function(text, language) {
   
   topic_dtm <- word_counts %>%
     cast_dtm(era, word, n)
-  
+  print("made dtm")
   set.seed(4142)
   library(topicmodels)
   topic_lda <- LDA(topic_dtm, k = 6, control = list(seed = 1234))
   
   topic_lda_td <- tidy(topic_lda)
-  
+  print("filtering topics...")
   topic1 = filter(topic_lda_td, topic == 1)
   topic2 = filter(topic_lda_td, topic == 2)
   topic3 = filter(topic_lda_td, topic == 3)
@@ -286,7 +286,7 @@ era_analysis = function(text, language) {
   wordcount = text_df %>% unnest_tokens(word, text) %>%
     count(word)
   colnames(wordcount)[1] <- c("term")
-  
+  print("scoring...")
   topic1scores = inner_join(topic1, wordcount)
   topic2scores = inner_join(topic2, wordcount)
   topic3scores = inner_join(topic3, wordcount)
