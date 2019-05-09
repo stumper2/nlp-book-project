@@ -225,7 +225,7 @@ sent_modeling = function(filename, language_name, type = "positivity") {
 sent_analysis = function(test_sent, model) {
   assigned_v = test_sent %>%
     count(word, sort = TRUE) %>%
-    inner_join(model)
+    inner_join(model, by = "word")
   
   return (assigned_v)
 }

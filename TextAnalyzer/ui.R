@@ -4,6 +4,10 @@ library(shinythemes)
 library(shinycssloaders)
 
 shinyUI(fluidPage(
+  tags$style(type="text/css",
+             ".shiny-output-error { visibility: hidden; }",
+             ".shiny-output-error:before { visibility: hidden; }"
+  ),
   # Application title
   theme = shinytheme("flatly"),
   titlePanel("Text Analysis and Modeling"),
@@ -32,8 +36,8 @@ shinyUI(fluidPage(
       mainPanel(# textOutput("contents"),
                 fluidRow(column(width = 6, withSpinner(plotOutput("lap_plot")), color = "blue"), column(width = 6, withSpinner(plotOutput("gt_plot"), color = "orange"))),
                 hr(),
-                fluidRow(column(width = 12, "This section will analyze the text to determine the most prevalent language given 2 different smoothing methods - Laplace smoothing and Good Turing’s smoothing. The possible languages are English, Spanish, and Italian. Due to the results of the smoothing being ≈0, the graphs are the ln(probability) with the smallest graph being the most likely. This will be highlighted in red.")),
-                hr()
+                fluidRow(column(width = 12, "This section will analyze the text to determine the most prevalent language (English, Spanish, and Italian) given 2 different smoothing methods - Laplace smoothing and Good Turing’s smoothing.")),
+                fluidRow(column(width = 12, "Due to the results of the smoothing being ≈0, the graphs are the ln(probability) with the smallest graph being the most likely. This will be highlighted in red."))
                 )
       )
     ),
@@ -58,7 +62,8 @@ shinyUI(fluidPage(
              ),
              mainPanel(
                withSpinner(plotOutput("era_plot"), type = 4, color = "black", color.background = "white"),
-               fluidRow("This section will analyze the inputted text and determine which literary period it was written during. This assertion is based on a model created by literature found on Gutenberg.com. The text is compared to each language-specific period and the highest returning score represents the most probable selection, thus highlighted in red."),
+               fluidRow("This section will analyze the inputted text and determine which literary period it was written during. This assertion is based on a model created by literature found on Gutenberg.com."),
+               fluidRow("The text is compared to each language-specific period and the highest returning score represents the most probable selection, thus highlighted in red."),
                hr(),
                fluidRow(column(width = 4, strong("English Timeline:"), br(), "- Middle English Period (1066-1500)", br(), "- The Renaissance (1500-1600)", br(), "- The Neoclassical Period (1600-1785)", br(), "- The Romantic Period (1785-1832)", br(), "- The Victorian Period (1832-1901)", br(), "- The Modern Period (1901-Present)"), 
                         column(width = 4, strong("Spanish Timeline:"), br(), "- Renaissance (1400-1600)", br(), "- Baroque (1600-1700)", br(), "- Enlightenment (1700-1800)", br(), "- Romanticism (1800-1850)", br(), "- Realism (1850-1900)", br(), "- Modernism (1900-Present)"), 
@@ -95,7 +100,8 @@ shinyUI(fluidPage(
         withSpinner(plotOutput("phonePlot"), type = 3, color = "orange", color.background = "white"),
         withSpinner(plotOutput("plot"), type = 3, color = "blue", color.background = "white"),
         hr(),
-        fluidRow(column(width = 12, "This tab analyzes the connotation of the text, specifically the connotation of each word. By tokenizing the document and comparing it to a sentiment dictionary, we are able to categorize words based on emotion, and more generally whether they are positive or negative. The first is a graph of the word frequencies sorted by sentiment where as the second is a Word cloud categorizing the most frequent words by their connotations."))
+        fluidRow(column(width = 12, "This tab analyzes the connotation of the text, specifically the connotation of each word. By tokenizing the document and comparing it to a sentiment dictionary, we are able to categorize words based on emotion, and more generally whether they are positive or negative.")),
+        fluidRow(column(width = 12, "The first is a graph of the word frequencies sorted by sentiment where as the second is a word cloud categorizing the most frequent words by their connotations."))
       )
   ))
 ))
