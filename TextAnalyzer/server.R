@@ -3,28 +3,16 @@ library(shiny)
 library(readtext)
 
 shinyServer(function(input, output) {
-  terms = eventReactive(input$update, {
-    # Change when the "update" button is pressed...
-    # ...but not for anything else
-    isolate({
-      withProgress({
-        setProgress(message = "Processing corpus...")
-        getTermMatrix(input$selection)
-      })
-    })
+  
+  # testing for readble file
+  output$contents = renderText ({
+    inFile = input$selection
+
+    if (is.null(inFile)) {
+      "Unable to Read File"
+    } 
   })
-  
-  # # testing for readble file
-  # output$contents = renderText ({
-  #   inFile = input$selection
-  # 
-  #   if (is.null(inFile)) {
-  #     "Unable to Read File"
-  #   } 
-  # })
-  
-  
-  
+
   #Laplace Graph
   output$lap_plot = renderPlot({
     
@@ -69,9 +57,6 @@ shinyServer(function(input, output) {
       scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
   })
   
-
-  
-  
   #caching hte top lang
   # lang = reactive({
   #   input$update
@@ -101,17 +86,19 @@ shinyServer(function(input, output) {
   #     sent_modeling(inFile$datapath, tolower(top_lang) , isolate(input$sentiment))
   # })
   # 
+  
   #Word clouds!
   output$phonePlot <- renderPlot({
-    input$update
-    
+
     validate (
       is_there_data((input$selection)$datapath) %then%
         need(input$update, "Press the update Button!")
     )
     
-    inFile = isolate(input$selection)
+    input$update3
     
+    inFile = isolate(input$selection3)
+
     input$SentUpdate
     it = sent_modeling(inFile$datapath, tolower(input$SentLanguage), tolower(input$sentiment))
     gr = ggplot(it) +
@@ -125,8 +112,6 @@ shinyServer(function(input, output) {
     } else {
       gr + labs(title = "Graph of frequencies in respect to Positive connotation", subtitle = "Grouped by positivity")
     }
-
-   
   })
   
   #Word clouds!
@@ -135,12 +120,10 @@ shinyServer(function(input, output) {
       is_there_data((input$selection)$datapath) %then%
         need(input$update, "Press the update Button!")
     )
-    
-    input$update
-    inFile = isolate(input$selection)
-    
-    input$Sentupdate
-    
+
+    input$update3
+    inFile = isolate(input$selection3)
+
     it = sent_modeling(inFile$datapath, tolower(input$SentLanguage), tolower(input$sentiment))
     
     ggplot(it) + 
@@ -150,24 +133,23 @@ shinyServer(function(input, output) {
       theme_minimal() 
   })
   
-
-  
   output$era_plot = renderPlot({
-    input$update
+    input$update2
+  
     validate (
       is_there_data((input$selection)$datapath) %then%
         need(input$update, "Press the update Button!")
     )
-    
-    inFile = isolate(input$selection)
-    scores = era_analysis(inFile$datapath, isolate(input$EraLanguage))
+    inFile = isolate(input$selection2)
+    scores = era_analysis(inFile$text, isolate(input$EraLanguage))
     
     scores %>%
       ggplot() +
       aes(x = document, y = format(round(as.numeric(score),2), nsmall = 2), fill = topic) +
       labs(x = "Era's", y = "Topic Scoring", title = "Topic Modeling based on Language specific Era") +
       geom_col() 
-  })
 
+    
+  })
 })
 

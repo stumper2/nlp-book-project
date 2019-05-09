@@ -37,6 +37,13 @@ shinyUI(fluidPage(
     
     tabPanel("Era", 
              sidebarPanel(width = 3,
+             sidebarPanel(
+               fileInput(
+                 "selection2",
+                 "Choose a Text File to Analyze",
+                 multiple = FALSE,
+                 accept = c(".txt")
+               ),
                selectInput(
                  "EraLanguage",
                  "Choose a language:",
@@ -45,7 +52,7 @@ shinyUI(fluidPage(
                              "Italian")
                ),
                hr(),
-               actionButton("update", "Change")
+               actionButton("update2", "Update")
              ),
              mainPanel(
                plotOutput("era_plot"),
@@ -56,6 +63,14 @@ shinyUI(fluidPage(
   tabPanel("Sentiment", sidebarLayout(
     # Sidebar with a slider and selection inputs
     sidebarPanel(width = 3,
+
+    sidebarPanel(
+      fileInput(
+        "selection3",
+        "Choose a Text File to Analyze",
+        multiple = FALSE,
+        accept = c(".txt")
+      ),
       selectInput(
         "SentLanguage",
         "Choose a language:",
@@ -70,12 +85,13 @@ shinyUI(fluidPage(
                     "Emotion")
       ),
       hr(),
-      actionButton("update", "Change")
+      actionButton("update3", "Update")
     ),
       mainPanel(
         fluidRow(column(width = 6, plotOutput("phonePlot")), column(width = 6,  plotOutput("plot"))),
         fluidRow(column(width = 12, "This tab analyzes the connotation of the text, specifically the connotation of each word. By tokenizing the document and comparing it to a sentiment dictionary, we are able to categorize words based on emotion, and more generally whether they are positive or negative. On the left is a graph representing the frequencies where as the right is a Word cloud categorizing the most frequent words by their connotations."))
       )
   ))
+))
 ))
 )
