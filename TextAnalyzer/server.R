@@ -46,9 +46,9 @@ shinyServer(function(input, output) {
         need(input$update, "Press the update Button!")
     )
     
-    inFile = file1()
+    fileOne = file1()
     
-    lap_df = language_df((inFile)$datapath, isolate(input$number), 1) 
+    lap_df = language_df((fileOne)$datapath, isolate(input$number), 1) 
     
     print("making laplace graph!")
       ggplot(lap_df) +
@@ -65,9 +65,9 @@ shinyServer(function(input, output) {
         need(input$update, "Press the update Button!")
     )
     
-    inFile = file1()
+    fileOne = file1()
     
-    gt_df = language_df((inFile)$datapath, isolate(input$number), 2)   
+    gt_df = language_df((fileOne)$datapath, isolate(input$number), 2)   
     
     print("making gt graph!")
     ggplot(gt_df) +
@@ -83,18 +83,20 @@ shinyServer(function(input, output) {
         need(input$update2, "Press the update Button!")
     )
     
-    inFile = file2()
-    scores = era_analysis(inFile$datapath, isolate(input$EraLanguage))
+    fileTwo = file2()
+    
+    scores = era_analysis(fileTwo$datapath, isolate(input$EraLanguage))
     
     scores1 = scores %>%
-      mutate(Maximum = ifelse(max(as.numeric(score)) == as.numeric(score), T, F)) 
-    scores1$Maximum
+      mutate(Maximum = ifelse(max(as.numeric(score)) == as.numeric(score), T, F))
+    
     scores1%>%
       ggplot() +
-      aes(x = document, y = format(round(as.numeric(score),4), nsmall = 2), fill = Maximum) +
+      aes(x = document, y = format(round(as.numeric(score), 4), nsmall = 2), fill = Maximum) +
       labs(x = "Era's", y = "Topic Scoring", title = "Topic Modeling based on Language specific Era") +
       geom_col() +
-      scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE)
+      scale_fill_manual(values = c('grey', 'Tomato'), guide = FALSE) +
+      theme(axis.text.x = element_text(angle = -45, vjust = 1))
   })
   
   #Word clouds!
@@ -140,5 +142,4 @@ shinyServer(function(input, output) {
       geom_text_wordcloud(rm_outside = TRUE) +   
       theme_minimal() 
   })
-  
 })

@@ -75,7 +75,6 @@ era_analysis = function(text, language, modeling) {
   topic5scores = inner_join(topic2, wordcount, by = term)
   topic6scores = inner_join(topic2, wordcount, by = term)
   
-  
   topic1score = 0
   for (i in 1:nrow(topic1scores)) {
     topic1score = topic1score + topic1scores$count * topic1scores$beta
@@ -101,7 +100,6 @@ era_analysis = function(text, language, modeling) {
   for (i in 1:nrow(topic6scores)) {
     topic6score = topic6score + topic6scores$count * topic6scores$beta
   }
-  
   
   topic_lda_gamma <- tidy(topic_lda, matrix = "gamma")
   book_topics <- topic_lda_gamma %>%

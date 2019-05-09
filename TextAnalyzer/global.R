@@ -10,8 +10,7 @@ library(purrrlyr)
 library(topicmodels)
 library(ggwordcloud)
 
-
-##Model Variables
+# Language Model Variables
 en_bigram = readRDS("../data/en_bigram.rds")
 it_bigram = readRDS("../data/it_bigram.rds")
 es_bigram = readRDS("../data/es_bigram.rds")
@@ -21,10 +20,10 @@ es_trigram = readRDS("../data/es_trigram.rds")
 en_qgram = readRDS("../data/en_qgram.rds")
 it_qgram = readRDS("../data/it_qgram.rds")
 es_qgram = readRDS("../data/es_qgram.rds")
-
-English = readRDS("../data/english.rds")
-Spanish = readRDS("../data/spanish.rds")
-Italian = readRDS("../data/italian.rds")
+# Era Model Variables
+en_era = readRDS("../data/en_era3.rds")
+es_era = readRDS("../data/es_era3.rds")
+it_era = readRDS("../data/it_era3.rds")
 
 `%then%` <- shiny:::`%OR%`  
 
@@ -188,13 +187,13 @@ language_df = function(filename, ngram, methodNumber) {
   }
   print("made all the probs!")
   if (methodNumber == 1) {
-    lap_df = data_frame("Prob" = c(lap_english_prob, lap_italian_prob, lap_spanish_prob), 
+    lap_df = tibble("Prob" = c(lap_english_prob, lap_italian_prob, lap_spanish_prob), 
                         "Language" = c("English", "Italian", "Spanish"),
                         "Minimum" = ifelse(min(-Prob) == -Prob, T, F))
     return(lap_df)
   }
   if (methodNumber == 2) {
-    gt_df = data_frame("Prob" = c(gt_english_prob, gt_italian_prob, gt_spanish_prob), 
+    gt_df = tibble("Prob" = c(gt_english_prob, gt_italian_prob, gt_spanish_prob), 
                        "Language" = c("English", "Italian", "Spanish"),
                        "Minimum" = ifelse(min(-Prob) == -Prob, T, F))
     return(gt_df)
@@ -237,170 +236,33 @@ sent_analysis = function(test_sent, model) {
 
 era_analysis = function(text, language) {
   print("Working on era")
+  
   if(language == "English"){
-    work = English
-    stopped = as.data.frame(stopwords(kind = "en"))
-    colnames(stopped) <- c("word")
+    work = en_era
+    topic = c("Middle", "Renaissance", "Victorian", "Neoclassical", "Modern", "Romantic")
   }
   
   if(language == "Italian"){
-
-    work = Italian
-    stopped = as.data.frame(stopwords(kind = "it"))
-    colnames(stopped) <- c("word")
+    work = it_era
+    topic = c("Baroque", "Contemporary", "Romanticism", "Medieval", "Classicism", "Renaissance")
   }
   
   if(language == "Spanish"){
-    work = Spanish
-    stopped = as.data.frame(stopwords(kind = "es"))
-    colnames(stopped) <- c("word")
+    work = es_era
+    topic = c("Modernism", "Realism", "Renaissance", "Baroque", "Enlightenment", "Romanticism")
   }
-  library(tidytext)
-  library(stringr)
-  library(tidyr)
   
-  by_word <- work %>%
-    unnest_tokens(word, text)
-  
-  word_counts <- by_word %>%
-    anti_join(stopped) %>%
-    count(era, word, sort = TRUE)
-  
-  topic_dtm <- word_counts %>%
-    cast_dtm(era, word, n)
-  print("made dtm")
-  set.seed(4142)
-  library(topicmodels)
-  topic_lda <- LDA(topic_dtm, k = 6, control = list(seed = 1234))
-  
-  topic_lda_td <- tidy(topic_lda)
-  print("filtering topics...")
-  topic1 = filter(topic_lda_td, topic == 1)
-  topic2 = filter(topic_lda_td, topic == 2)
-  topic3 = filter(topic_lda_td, topic == 3)
-  topic4 = filter(topic_lda_td, topic == 4)
-  topic5 = filter(topic_lda_td, topic == 5)
-  topic6 = filter(topic_lda_td, topic == 6)
-  library(readtext)
   text_df = readtext(text)
-  wordcount = text_df %>% unnest_tokens(word, text) %>%
+  
+  wordcount = text_df %>% 
+    unnest_tokens(word, text) %>%
     count(word)
-  colnames(wordcount)[1] <- c("term")
+  
   print("scoring...")
-  topic1scores = inner_join(topic1, wordcount)
-  topic2scores = inner_join(topic2, wordcount)
-  topic3scores = inner_join(topic3, wordcount)
-  topic4scores = inner_join(topic4, wordcount)
-  topic5scores = inner_join(topic5, wordcount)
-  topic6scores = inner_join(topic6, wordcount)
+  # same words
+  topicscores = wordcount %>% inner_join(work, by = "word")
+  scores = c(sum(topicscores[,3]),sum(topicscores[,4]),sum(topicscores[,5]),sum(topicscores[,6]),sum(topicscores[,7]),sum(topicscores[,8]))
+  final = data.frame(document = topic, score = scores)
   
-  topic1score = 0
-  for (i in 1:nrow(topic1scores)) {
-    topic1score = topic1score + topic1scores$n[i] * topic1scores$beta[i]
-  }
-  
-  topic2score = 0
-  for (i in 1:nrow(topic2scores)) {
-    topic2score = topic2score + topic2scores$n[i] * topic2scores$beta[i]
-  }
-  topic3score = 0
-  for (i in 1:nrow(topic3scores)) {
-    topic3score = topic3score + topic3scores$n[i] * topic3scores$beta[i]
-  }
-  topic4score = 0
-  for (i in 1:nrow(topic4scores)) {
-    topic4score = topic4score + topic4scores$n[i] * topic4scores$beta[i]
-  }
-  topic5score = 0
-  for (i in 1:nrow(topic5scores)) {
-    topic5score = topic5score + topic5scores$n[i] * topic5scores$beta[i]
-  }
-  topic6score = 0
-  for (i in 1:nrow(topic6scores)) {
-    topic6score = topic6score + topic6scores$n[i] * topic6scores$beta[i]
-  }
-  
-  topic_lda_gamma <- tidy(topic_lda, matrix = "gamma")
-  book_topics <- topic_lda_gamma %>%
-    group_by(document) %>%
-    top_n(1, gamma) %>%
-    ungroup() %>%
-    arrange(gamma)
-  scores = rbind(topic1score,topic2score,topic3score,topic4score,topic5score,topic6score)
-  topic = rbind('1','2','3','4','5','6')
-  
-  scores = cbind(scores, topic)
-  scores = as.data.frame(scores)
-  book_topics = as.data.frame(book_topics)
-  colnames(scores) <- c("score","topic")
-  book_topics[,2] <- as.character(book_topics[,2]) 
-  scores[,2] <- as.character(scores[,2])
-  if(language == "English"){
-    book_topics[1,2] = "6"
-  }
-  finalscores = inner_join(scores, book_topics)
-  # for (i in nrow(finalscores)) {
-  #   if(language == "Italian"){
-  #     if(finalscores$document[i] == "1550"){
-  #       finalscores$document[i] = "Baroque Period (1550-1700)"
-  #     }
-  #     if(finalscores$document[i] == "1915"){
-  #       finalscores$document[i] = "Contemporary Period (1915-Present)"
-  #     }
-  #     if(finalscores$document[i] == "1815"){
-  #       finalscores$document[i] = "Romanticism and Realism Period (1815-1915)"
-  #     }
-  #     if(finalscores$document[i] == "1200"){
-  #       finalscores$document[i] = "Medieval Period (1200-1400)"
-  #     }
-  #     if(finalscores$document[i] == "1700"){
-  #       finalscores$document[i] = "Classicism Period (1700-1815)"
-  #     }
-  #     if(finalscores$document[i] == "1400"){
-  #       finalscores$document[i] = "Renaissance Period (1400-1550)"
-  #     }
-  #     
-  #   }
-  #   if(language == "English"){
-  #     if(finalscores$document[i] == "1066"){
-  #       finalscores$document[i] = "Middle English Period (1066-1500)"
-  #     }
-  #     if(finalscores$document[i] == "1500"){
-  #       finalscores$document[i] = "The Renaissance (1500-1600)"
-  #     }
-  #     if(finalscores$document[i] == "1832"){
-  #       finalscores$document[i] = "The Victorian Period (1832-1901)"
-  #     }
-  #     if(finalscores$document[i] == "1660"){
-  #       finalscores$document[i] = "The Neoclassical Period (1600-1785)"
-  #     }
-  #     if(finalscores$document[i] == "1901"){
-  #       finalscores$document[i] = "The Modern Period (1901-Present)"
-  #     }
-  #     if(finalscores$document[i] == "1785"){
-  #       finalscores$document[i] = "The Romantic Period (1785-1832)"
-  #     }
-  #   }
-  #   if(language == "Spanish"){
-  #     if(finalscores$document[i] == "1900"){
-  #       finalscores$document[i] = "Modernism (1900-Present)"
-  #     }
-  #     if(finalscores$document[i] == "1850"){
-  #       finalscores$document[i] = "Realism (1850-1900)"
-  #     }
-  #     if(finalscores$document[i] == "1400"){
-  #       finalscores$document[i] = "Renaissance (1400-1600)"
-  #     }
-  #     if(finalscores$document[i] == "1600"){
-  #       finalscores$document[i] = "Baroque (1600-1700)"
-  #     }
-  #     if(finalscores$document[i] == "1700"){
-  #       finalscores$document[i] = "Enlightenment (1700-1800)"
-  #     }
-  #     if(finalscores$document[i] == "1800"){
-  #       finalscores$document[i] = "Romanticism (1800-1850)"
-  #     }
-  #   }
-  # }
-  return(finalscores)
+  return(final)
 }
